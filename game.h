@@ -29,6 +29,7 @@ void dropIt();
 void fixIt();
 void moveIt(int direction);
 void rotateIt();
+void dropToBottom();
 
 bool checkForElimination();
 void eliminate(int index);

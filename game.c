@@ -22,9 +22,9 @@ int Tetriminos[10][4][4] = {
 	{1,0,0,0},
 	{0,0,0,0}},//Cis-L 1
 
-	{{0,2,0,0},
+	{{2,2,0,0},
 	{0,2,0,0},
-	{2,2,0,0},
+	{0,2,0,0},
 	{0,0,0,0}},//Trans-L 2
 
 	{{3,0,0,0},
@@ -72,7 +72,7 @@ void showBlock() {
 		for (i = 0; i < 4; i++)
 			for (j = 0; j < 4; j++) {
 				if (drop.mat[i][j] != 0) {
-					drawBlock(drop.id + 1, drop.x + i, drop.y + j);
+					drawBlock(drop.id + 1, drop.x + j, drop.y - i);
 				}
 			}
 	}
@@ -149,7 +149,7 @@ void dropIt() {
 	int i, j;
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++) {
-			if (drop.mat[i][j] != 0 && (map[drop.x + i][drop.y + j - 1] != 0 || drop.y + j == 0)) {
+			if (drop.mat[i][j] != 0 && (map[drop.x + j][drop.y - i - 1] != 0 || drop.y - i == 0)) {
 				fixIt();
 				return;
 			}
@@ -161,7 +161,7 @@ void fixIt() {
 	int i, j;
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++)
-			if (drop.mat[i][j]) map[drop.x + i][drop.y + j] = drop.id + 1;
+			if (drop.mat[i][j]) map[drop.x + j][drop.y - i] = drop.id + 1;
 	isDropping = 0;
 	while (checkForElimination());
 }
@@ -171,7 +171,7 @@ void moveIt(int id) {
 	int i, j;
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++)
-			if (drop.mat[i][j] != 0 && (map[drop.x + i + direction[id][0]][drop.y + j] || drop.x + i + direction[id][0] < 0 || drop.x + i + direction[id][0] > 15)) return;
+			if (drop.mat[i][j] != 0 && (map[drop.x + j + direction[id][0]][drop.y - i] || drop.x + j + direction[id][0] < 0 || drop.x + j + direction[id][0] > 15)) return;
 	drop.x += direction[id][0];
 }
 
@@ -224,7 +224,7 @@ void gravity() {
 
 // TODO: The feasibility of rotation.
 void rotateIt() {
-	if (!isDropping) return;
+	if (!isDropping || drop.id == 4) return;
 	int tmp[4][4] = { 0 };
 	int i, j;
 	for (i = 0; i < 4; i++)
@@ -238,4 +238,25 @@ void rotateIt() {
 	0 0 0 0  1 1 1 0
 	*/
 	memcpy(drop.mat, tmp, sizeof(tmp));
+}
+
+void dropToBottom() {
+	int i, j, k;
+	for (k = drop.y - 1; k >= 0; k--) {
+		for (i = 3; i >= 0; i--) {
+			for (j = 0; j < 4; j++) {
+				if (!drop.mat[i][j]) continue;
+				if (k - i == 0) {
+					drop.y = k;
+					fixIt();
+					return;
+				}
+				if (map[drop.x + j][k - i]) {
+					drop.y = k + 1;
+					fixIt();
+					return;
+				}
+			}
+		}
+	}
 }

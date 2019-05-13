@@ -49,6 +49,11 @@ void KeyboardEventProcess(int key, int event) {
 		case VK_UP:
 			rotateIt();
 			break;
+		case VK_DOWN:
+			dropIt();
+			break;
+		case VK_SPACE:
+			dropToBottom();
 		}
 	case KEY_UP:
 		break;
@@ -75,6 +80,7 @@ void Main() {
 	SetWindowSize(WindowWidth, WindowHeight);
 
 	InitGraphics();
+	InitConsole();
 	srand(time(NULL));
 
 	registerCharEvent(CharEventProcess);
