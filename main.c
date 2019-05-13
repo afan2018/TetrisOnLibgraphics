@@ -46,6 +46,9 @@ void KeyboardEventProcess(int key, int event) {
 		case VK_RIGHT:
 			moveIt(1);
 			break;
+		case VK_UP:
+			rotateIt();
+			break;
 		}
 	case KEY_UP:
 		break;

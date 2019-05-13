@@ -28,3 +28,8 @@ void drawBlockInnerBorder(int x, int y);
 void dropIt();
 void fixIt();
 void moveIt(int direction);
+void rotateIt();
+
+bool checkForElimination();
+void eliminate(int index);
+void gravity();
