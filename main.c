@@ -28,6 +28,7 @@
 void DisplayClear(void); 
 void startTimer(int id,int timeinterval);
 void display(void); 
+void drawBackground(void);
 void drawGameArea(void);
 
 void CharEventProcess(char ch) {
@@ -54,6 +55,7 @@ void KeyboardEventProcess(int key, int event) {
 			break;
 		case VK_SPACE:
 			dropToBottom();
+			break;
 		}
 	case KEY_UP:
 		break;
@@ -80,7 +82,6 @@ void Main() {
 	SetWindowSize(WindowWidth, WindowHeight);
 
 	InitGraphics();
-	InitConsole();
 	srand(time(NULL));
 
 	registerCharEvent(CharEventProcess);
@@ -93,12 +94,21 @@ void Main() {
 
 void display() {
 	DisplayClear();
+	drawBackground();
 	drawGameArea();
 	showBlock();
 }
 
-void drawGameArea() {
+void drawBackground() {
 	SetPenColor("black");
+	SetPenSize(5000);
+	MovePen(0, 0);
+	DrawLine(12, 0);
+
+}
+
+void drawGameArea() {
+	SetPenColor("red");
 	SetPenSize(3);
 	MovePen(GameAreaWidth, 0);
 	DrawLine(0, GameAreaHeight);

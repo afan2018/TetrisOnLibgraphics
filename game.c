@@ -8,13 +8,13 @@
 #define BlockSize 0.5
 #define BlockMargin 0.05
 
-// 0 - 15 X
-// 0 - 23 Y
-// coordinate X and Y stand for the bottom-left of the block
+// 0 - 23 rows
+// 0 - 15 column
+// coordinate stand for the bottom-left of the block
 // 0 stands for not occupied
 // different values in map stand for different colors
 
-int map[16][24];
+int map[24][16];
 
 int Tetriminos[10][4][4] = {
 	{{1,1,0,0},
@@ -57,7 +57,7 @@ int Tetriminos[10][4][4] = {
 struct Dropping {
 	// id stands for the kind of tetrimino of which the dropping one is
 	// x, y stand for the top-left of the dropping tetrimino matrix
-	int id, x, y;
+	int id, column, row;
 	int mat[4][4];
 } drop;
 
@@ -65,20 +65,20 @@ bool isDropping;
 
 void showBlock() {
 	int i, j;
-	for (i = 0; i < 16; i++)
-		for (j = 0; j < 24; j++)
+	for (i = 0; i < 24; i++)
+		for (j = 0; j < 16; j++)
 			if (map[i][j] != 0) drawBlock(map[i][j], i, j);
 	if (isDropping) {
 		for (i = 0; i < 4; i++)
 			for (j = 0; j < 4; j++) {
 				if (drop.mat[i][j] != 0) {
-					drawBlock(drop.id + 1, drop.x + j, drop.y - i);
+					drawBlock(drop.id + 1, drop.row - i, drop.column + j);
 				}
 			}
 	}
 }
 
-void drawBlock(int color, int x, int y) {
+void drawBlock(int color, int row, int column) {
 	switch (color) {
 	case 1:
 		SetPenColor("red");
@@ -99,26 +99,26 @@ void drawBlock(int color, int x, int y) {
 		SetPenColor("green");
 		break;
 	case 7:
-		SetPenColor("black");
+		SetPenColor("white");
 		break;
 	}
-	drawBlockOuterBorder(x, y);
-	drawBlockInnerBorder(x, y);
+	drawBlockOuterBorder(row, column);
+	drawBlockInnerBorder(row, column);
 }
 
-void drawBlockOuterBorder(int x, int y) {
+void drawBlockOuterBorder(int row, int column) {
 	SetPenSize(2);
-	MovePen(x*BlockSize, y*BlockSize);
+	MovePen(column*BlockSize, row*BlockSize);
 	DrawLine(BlockSize, 0);
 	DrawLine(0, BlockSize);
 	DrawLine(-BlockSize, 0);
 	DrawLine(0, -BlockSize);
 }
 
-void drawBlockInnerBorder(int x, int y) {
+void drawBlockInnerBorder(int row, int column) {
 	SetPenSize(1);
 	// TODO: Figure out why there are minor adjustments.
-	MovePen(x*BlockSize+BlockMargin-0.005, y*BlockSize+BlockMargin+0.005);
+	MovePen(column*BlockSize+BlockMargin-0.005, row*BlockSize+BlockMargin+0.005);
 	DrawLine(BlockSize-2*BlockMargin, 0);
 	DrawLine(0, BlockSize-2*BlockMargin);
 	DrawLine(-BlockSize+2*BlockMargin, 0);
@@ -132,8 +132,8 @@ void refreshGame() {
 		count = 0;
 		drop.id = (int)(rand() * 10) % 7;
 		memcpy(drop.mat, Tetriminos[drop.id], sizeof(drop.mat));
-		drop.x = 6;
-		drop.y = 23;
+		drop.column = 6;
+		drop.row = 23;
 		isDropping = 1;
 		return;
 	}
@@ -149,19 +149,19 @@ void dropIt() {
 	int i, j;
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++) {
-			if (drop.mat[i][j] != 0 && (map[drop.x + j][drop.y - i - 1] != 0 || drop.y - i == 0)) {
+			if (drop.mat[i][j] != 0 && (map[drop.row - i - 1][drop.column + j] != 0 || drop.row - i == 0)) {
 				fixIt();
 				return;
 			}
 		}
-	drop.y--;
+	drop.row--;
 }
 
 void fixIt() {
 	int i, j;
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++)
-			if (drop.mat[i][j]) map[drop.x + j][drop.y - i] = drop.id + 1;
+			if (drop.mat[i][j]) map[drop.row - i][drop.column + j] = drop.id + 1;
 	isDropping = 0;
 	while (checkForElimination());
 }
@@ -171,16 +171,16 @@ void moveIt(int id) {
 	int i, j;
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++)
-			if (drop.mat[i][j] != 0 && (map[drop.x + j + direction[id][0]][drop.y - i] || drop.x + j + direction[id][0] < 0 || drop.x + j + direction[id][0] > 15)) return;
-	drop.x += direction[id][0];
+			if (drop.mat[i][j] != 0 && (map[drop.row - i][drop.column + j + direction[id][0]] || drop.column + j + direction[id][0] < 0 || drop.column + j + direction[id][0] > 15)) return;
+	drop.column += direction[id][0];
 }
 
 bool checkForElimination() {
 	int i, j;
 	bool didSomething = 0;
-	for (j = 0; j < 24; j++) {
+	for (i = 0; i < 24; i++) {
 		bool elimAble = 1;
-		for (i = 0; i < 16; i++) {
+		for (j = 0; j < 16; j++) {
 			if (map[i][j] == 0) {
 				elimAble = 0;
 				break;
@@ -188,7 +188,7 @@ bool checkForElimination() {
 		}
 		if (elimAble) {
 			didSomething = 1;
-			eliminate(j);
+			eliminate(i);
 			//gravity();
 		}
 	}
@@ -197,11 +197,11 @@ bool checkForElimination() {
 
 void eliminate(int index) {
 	int i, j;
-	for (j = index; j < 24; j++) {
+	for (i = index; i < 24; i++) {
 		bool isBlank = 1;
-		for (i = 0; i < 16; i++) {
-			if (map[i][j + 1] != 0) isBlank = 0;
-			map[i][j] = map[i][j + 1];
+		for (j = 0; j < 16; j++) {
+			if (map[i + 1][j] != 0) isBlank = 0;
+			map[i][j] = map[i + 1][j];
 		}
 		if (isBlank) break;
 	}
@@ -242,17 +242,18 @@ void rotateIt() {
 
 void dropToBottom() {
 	int i, j, k;
-	for (k = drop.y - 1; k >= 0; k--) {
+	for (k = drop.row - 1; k >= 0; k--) {
+		bool flag = 0;
 		for (i = 3; i >= 0; i--) {
 			for (j = 0; j < 4; j++) {
 				if (!drop.mat[i][j]) continue;
-				if (k - i == 0) {
-					drop.y = k;
+				if (k - i < 0) {
+					drop.row = k + 1;
 					fixIt();
 					return;
 				}
-				if (map[drop.x + j][k - i]) {
-					drop.y = k + 1;
+				if (map[k - i][drop.column + j]) {
+					drop.row = k + 1;
 					fixIt();
 					return;
 				}
