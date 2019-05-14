@@ -21,15 +21,17 @@
 void refreshGame();
 
 void showBlock();
-void drawBlock(int color, int x, int y);
-void drawBlockOuterBorder(int x, int y);
-void drawBlockInnerBorder(int x, int y);
+void drawBlock(int color, int row, int column);
+void drawHintBlock(int row, int column);
+void drawBlockOuterBorder(int row, int column);
+void drawBlockInnerBorder(int row, int column);
 
 void dropIt();
 void fixIt();
 void moveIt(int direction);
 void rotateIt();
 void dropToBottom();
+int findBottomPosition();
 
 bool checkForElimination();
 void eliminate(int index);

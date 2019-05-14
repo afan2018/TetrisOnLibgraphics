@@ -14,7 +14,7 @@
 // 0 stands for not occupied
 // different values in map stand for different colors
 
-int map[24][16];
+int map[26][16];
 
 int Tetriminos[10][4][4] = {
 	{{1,1,0,0},
@@ -69,6 +69,13 @@ void showBlock() {
 		for (j = 0; j < 16; j++)
 			if (map[i][j] != 0) drawBlock(map[i][j], i, j);
 	if (isDropping) {
+		int bottom = findBottomPosition();
+		for (i = 0; i < 4; i++)
+			for (j = 0; j < 4; j++) {
+				if (drop.mat[i][j] != 0) {
+					drawBlock(8, bottom - i, drop.column + j);
+				}
+			}
 		for (i = 0; i < 4; i++)
 			for (j = 0; j < 4; j++) {
 				if (drop.mat[i][j] != 0) {
@@ -101,9 +108,24 @@ void drawBlock(int color, int row, int column) {
 	case 7:
 		SetPenColor("white");
 		break;
+	case 8:
+		SetPenColor("gray");
+	}
+	if (color == 8) {
+		drawHintBlock(row, column);
+		return;
 	}
 	drawBlockOuterBorder(row, column);
 	drawBlockInnerBorder(row, column);
+}
+
+void drawHintBlock(int row, int column) {
+	SetPenSize(2);
+	MovePen(column*BlockSize, row*BlockSize);
+	DrawLine(BlockSize, 0);
+	DrawLine(0, BlockSize);
+	DrawLine(-BlockSize, 0);
+	DrawLine(0, -BlockSize);
 }
 
 void drawBlockOuterBorder(int row, int column) {
@@ -125,7 +147,7 @@ void drawBlockInnerBorder(int row, int column) {
 	DrawLine(0, -BlockSize+2*BlockMargin);
 }
 
-int speed = 1, count;
+int speed = 5, count;
 
 void refreshGame() {
 	if (!isDropping) {
@@ -133,7 +155,7 @@ void refreshGame() {
 		drop.id = (int)(rand() * 10) % 7;
 		memcpy(drop.mat, Tetriminos[drop.id], sizeof(drop.mat));
 		drop.column = 6;
-		drop.row = 23;
+		drop.row = 24;
 		isDropping = 1;
 		return;
 	}
@@ -160,8 +182,12 @@ void dropIt() {
 void fixIt() {
 	int i, j;
 	for (i = 0; i < 4; i++)
-		for (j = 0; j < 4; j++)
-			if (drop.mat[i][j]) map[drop.row - i][drop.column + j] = drop.id + 1;
+		for (j = 0; j < 4; j++) {
+			if (!drop.mat[i][j]) continue;
+			if (drop.row - i > 23) exit(-1);
+			map[drop.row - i][drop.column + j] = drop.id + 1;
+		}
+			
 	isDropping = 0;
 	while (checkForElimination());
 }
@@ -241,6 +267,11 @@ void rotateIt() {
 }
 
 void dropToBottom() {
+	drop.row = findBottomPosition();
+	fixIt();
+}
+
+int findBottomPosition() {
 	int i, j, k;
 	for (k = drop.row - 1; k >= 0; k--) {
 		bool flag = 0;
@@ -248,14 +279,10 @@ void dropToBottom() {
 			for (j = 0; j < 4; j++) {
 				if (!drop.mat[i][j]) continue;
 				if (k - i < 0) {
-					drop.row = k + 1;
-					fixIt();
-					return;
+					return k + 1;
 				}
 				if (map[k - i][drop.column + j]) {
-					drop.row = k + 1;
-					fixIt();
-					return;
+					return k + 1;
 				}
 			}
 		}
