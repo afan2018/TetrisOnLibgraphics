@@ -36,3 +36,5 @@ int findBottomPosition();
 bool checkForElimination();
 void eliminate(int index);
 void gravity();
+
+void gameOver();
