@@ -22,16 +22,16 @@
 #include "game.h"
 
 #define WindowWidth 12
-#define WindowHeight 12
+#define WindowHeight 12.5
 #define GameAreaWidth 8
 #define GameAreaHeight 12
 
-static int    stop = 0;   // 允许旋转
-static int    start = 1; // 显示更多按钮
+ int    stop = 0;   
+ int    start = 0; 
 
-void DisplayClear(void); 
-void startTimer(int id,int timeinterval);
-void display(void); 
+void DisplayClear(void);
+void startTimer(int id, int timeinterval);
+void display(void);
 void drawBackground(void);
 void drawGameArea(void);
 
@@ -41,7 +41,7 @@ void CharEventProcess(char ch) {
 }
 
 void KeyboardEventProcess(int key, int event) {
-	uiGetKeyboard(key,event);
+	uiGetKeyboard(key, event);
 	switch (event) {
 	case KEY_DOWN:
 		switch (key) {
@@ -68,7 +68,7 @@ void KeyboardEventProcess(int key, int event) {
 }
 
 void MouseEventProcess(int x, int y, int button, int event) {
-	uiGetMouse(x,y,button,event);
+	uiGetMouse(x, y, button, event);
 	display();
 }
 
@@ -86,6 +86,7 @@ void Main() {
 	SetWindowSize(WindowWidth, WindowHeight);
 
 	InitGraphics();
+	// InitConsole();
 	srand(time(NULL));
 
 	registerCharEvent(CharEventProcess);
@@ -99,8 +100,8 @@ void Main() {
 void drawMenu() {
 	static char * menulistGame[] = {
 		"Game",
-		"Start",
-		"Stop",
+		"Start | Ctrl-B",
+		"Stop | Ctrl-S",
 		"Exit | Ctrl-E"
 	};
 	static char * selectedLabel = NULL;
@@ -114,9 +115,9 @@ void drawMenu() {
 	double xindent = WindowHeight / 20; // 缩进
 	int    selection;
 
-	menulistGame[1] = start ? "Start" : "Restart";
-	menulistGame[2] = stop ? "Resume" : "Stop";
-	selection = menuList(GenUIID(0), x, y - h, w, wlist + 0.5, h, menulistGame, sizeof(menulistGame) / sizeof(menulistGame[0]));
+	menulistGame[1] = start ? "Thanks | Ctrl-B" : "Start | Ctrl-B";
+	menulistGame[2] = stop ? "Resume | Ctrl-S" : "Stop | Ctrl-S";
+	selection = menuList(GenUIID(0), x, y - h, w, wlist + 0.7, h, menulistGame, sizeof(menulistGame) / sizeof(menulistGame[0]));
 	if (selection > 0) selectedLabel = menulistGame[selection];
 	if (selection == 1)
 		start = !start;
@@ -124,7 +125,6 @@ void drawMenu() {
 		stop = !stop;
 	if (selection == 3)
 		exit(-1); // choose to exit
-
 }
 
 void display() {
@@ -148,4 +148,5 @@ void drawGameArea() {
 	SetPenSize(3);
 	MovePen(GameAreaWidth, 0);
 	DrawLine(0, GameAreaHeight);
+	DrawLine(-GameAreaWidth, 0);
 }

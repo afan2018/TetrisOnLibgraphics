@@ -8,6 +8,8 @@
 #define BlockSize 0.5
 #define BlockMargin 0.05
 
+extern int stop;
+extern int start;
 // 0 - 23 rows
 // 0 - 15 column
 // coordinate stand for the bottom-left of the block
@@ -16,48 +18,189 @@
 
 int map[26][16];
 
-int Tetriminos[10][4][4] = {
-	{{1,1,0,0},
-	{1,0,0,0},
-	{1,0,0,0},
-	{0,0,0,0}},//Cis-L 1
+int Tetriminos[10][4][4][4] = {
+	
+{
+		{{1,1,0,0},
+		{ 1,0,0,0 },
+		{ 1,0,0,0 },
+		{ 0,0,0,0 }},
 
-	{{2,2,0,0},
-	{0,2,0,0},
-	{0,2,0,0},
-	{0,0,0,0}},//Trans-L 2
+		{{0,0,0,0},
+		{ 1,0,0,0 },
+		{ 1,1,1,0 },
+		{ 0,0,0,0 }},
 
-	{{3,0,0,0},
-	{3,3,0,0},
-	{0,3,0,0},
-	{0,0,0,0}},//Cis-S 3
+		{{0,0,1,0 },
+		{ 0,0,1,0 },
+		{ 0,1,1,0 },
+		{ 0,0,0,0 }},
 
-	{{0,4,0,0},
-	{4,4,0,0},
-	{4,0,0,0},
-	{0,0,0,0}},//Trans-S 4
+		{{1,1,1,0},
+		{ 0,0,1,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 }}
+	},
 
-	{{5,5,0,0},
-	{5,5,0,0},
-	{0,0,0,0},
-	{0,0,0,0}},//O 5
+	{
+		{{2,2,0,0},
+		{ 0,2,0,0 },
+		{ 0,2,0,0 },
+		{ 0,0,0,0 }},
 
-	{{6,0,0,0},
-	{6,0,0,0},
-	{6,0,0,0},
-	{6,0,0,0}},//I 6
+		{ {0,0,0,0},
+		{ 2,2,2,0 },
+		{ 2,0,0,0 },
+		{ 0,0,0,0 }},
 
-	{{0,7,0,0},
-	{7,7,0,0},
-	{0,7,0,0},
-	{0,0,0,0}}//E 7 
+		{ {0,2,0,0 },
+		{ 0,2,0,0 },
+		{ 0,2,2,0 },
+		{ 0,0,0,0 }},
 
+		{ {0,0,2,0},
+		{ 2,2,2,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 } }
+	},
+
+	{
+		{ {3, 0, 0, 0},
+		{ 3,3,0,0 },
+		{ 0,3,0,0 },
+		{ 0,0,0,0 }},
+
+		{ {0,0,0,0},
+		{ 0,3,3,0 },
+		{ 3,3,0,0 },
+		{ 0,0,0,0 } },
+
+		{ {0,3,0,0 },
+		{ 0,3,3,0 },
+		{ 0,0,3,0 },
+		{ 0,0,0,0 } },
+
+		{ {0,3,3,0},
+		{ 3,3,0,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 } }
+	},
+
+	{
+		{ {0, 4, 0, 0},
+		{ 4,4,0,0 },
+		{ 4,0,0,0 },
+		{ 0,0,0,0 }},
+
+		{ {0,0,0,0},
+		{ 4,4,0,0 },
+		{ 0,4,4,0 },
+		{ 0,0,0,0 } },
+
+		{ {0,0,4,0 },
+		{ 0,4,4,0 },
+		{ 0,4,0,0 },
+		{ 0,0,0,0 } },
+
+		{ {4,4,0,0},
+		{ 0,4,4,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 } }
+	},
+	
+	{
+		{ {0, 5, 0, 0},
+		{ 5,5,0,0 },
+		{ 5,0,0,0 },
+		{ 0,0,0,0 }},
+
+		{ {0,0,0,0},
+		{ 5,5,0,0 },
+		{ 0,5,5,0 },
+		{ 0,0,0,0 } },
+
+		{ {0,0,5,0 },
+		{ 0,5,5,0 },
+		{ 0,5,0,0 },
+		{ 0,0,0,0 } },
+
+		{ {5,5,0,0},
+		{ 0,5,5,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 } }
+	},
+
+	{
+		{ {6, 6, 0, 0},
+		{ 6,6,0,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 }},
+
+		{ {6, 6, 0, 0},
+		{ 6,6,0,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 }},
+
+		{ {6, 6, 0, 0},
+		{ 6,6,0,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 }},
+
+		{ {6, 6, 0, 0},
+		{ 6,6,0,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 }}
+	},
+
+	{
+		{ {7, 0, 0, 0},
+		{ 7,0,0,0 },
+		{ 7,0,0,0 },
+		{ 7,0,0,0 }},
+
+		{ {7, 7, 7, 7},
+		{ 0,0,0,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 }},
+
+		{ {7, 0, 0, 0},
+		{ 7,0,0,0 },
+		{ 7,0,0,0 },
+		{ 7,0,0,0 }},
+
+		{ {7, 7, 7, 7},
+		{ 0,0,0,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 }},
+	},
+
+	{
+		{ {0, 7, 0, 0},
+		{ 7,7,7,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 }},
+
+		{ {0,7,0,0},
+		{ 7,7,0,0 },
+		{ 0,7,0,0 },
+		{ 0,0,0,0 } },
+
+		{ {0,0,0,0 },
+		{ 7,7,7,0 },
+		{ 0,7,0,0 },
+		{ 0,0,0,0 } },
+
+		{ {0,7,0,0},
+		{ 0,7,7,0 },
+		{ 0,7,0,0 },
+		{ 0,0,0,0 } }
+	}
 };
 
 struct Dropping {
 	// id stands for the kind of tetrimino of which the dropping one is
 	// x, y stand for the top-left of the dropping tetrimino matrix
-	int id, column, row;
+	int id, column, row, direction;
 	int mat[4][4];
 } drop;
 
@@ -67,25 +210,25 @@ void showBlock() {
 	int i, j;
 	for (i = 0; i < 24; i++)
 		for (j = 0; j < 16; j++)
-			if (map[i][j] != 0) drawBlock(map[i][j], i, j);
+			if (map[i][j] != 0) drawBlock(map[i][j], i, j, 0);
 	if (isDropping) {
 		int bottom = findBottomPosition();
 		for (i = 0; i < 4; i++)
 			for (j = 0; j < 4; j++) {
-				if (drop.mat[i][j] != 0) {
-					drawBlock(8, bottom - i, drop.column + j);
+				if (drop.mat[i][j] != 0 && bottom - i < 24) {
+					drawBlock(8, bottom - i, drop.column + j, 1);
 				}
 			}
 		for (i = 0; i < 4; i++)
 			for (j = 0; j < 4; j++) {
-				if (drop.mat[i][j] != 0) {
-					drawBlock(drop.id + 1, drop.row - i, drop.column + j);
+				if (drop.mat[i][j] != 0 && drop.row - i  < 24) {
+					drawBlock(drop.id + 1, drop.row - i, drop.column + j, 0);
 				}
 			}
 	}
 }
 
-void drawBlock(int color, int row, int column) {
+void drawBlock(int color, int row, int column,int isHint) {
 	switch (color) {
 	case 1:
 		SetPenColor("red");
@@ -109,9 +252,9 @@ void drawBlock(int color, int row, int column) {
 		SetPenColor("white");
 		break;
 	case 8:
-		SetPenColor("gray");
+		SetPenColor("dark gray");
 	}
-	if (color == 8) {
+	if (isHint) {
 		drawHintBlock(row, column);
 		return;
 	}
@@ -150,18 +293,22 @@ void drawBlockInnerBorder(int row, int column) {
 int speed = 5, count;
 
 void refreshGame() {
-	if (!isDropping) {
+	if ((!isDropping)&&(start==1)) {
 		count = 0;
 		drop.id = (int)(rand() * 10) % 7;
-		memcpy(drop.mat, Tetriminos[drop.id], sizeof(drop.mat));
+		memcpy(drop.mat, Tetriminos[drop.id][0], sizeof(drop.mat));
+		drop.direction = 0;
 		drop.column = 6;
 		drop.row = 24;
 		isDropping = 1;
 		return;
 	}
-	if (count == speed) {
+	if ((count == speed)&&(stop==0)) {
 		count = 0;
 		dropIt();
+		return;
+	}
+	if ((count == speed) && (stop == 1)) {
 		return;
 	}
 	count++;
@@ -184,10 +331,11 @@ void fixIt() {
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++) {
 			if (!drop.mat[i][j]) continue;
-			if (drop.row - i > 23) exit(-1);
+			if (drop.row - i > 23) {
+				gameOver();
+			}
 			map[drop.row - i][drop.column + j] = drop.id + 1;
 		}
-			
 	isDropping = 0;
 	while (checkForElimination());
 }
@@ -197,7 +345,8 @@ void moveIt(int id) {
 	int i, j;
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++)
-			if (drop.mat[i][j] != 0 && (map[drop.row - i][drop.column + j + direction[id][0]] || drop.column + j + direction[id][0] < 0 || drop.column + j + direction[id][0] > 15)) return;
+			if (drop.mat[i][j] != 0 && (map[drop.row - i][drop.column + j + direction[id][0]] || drop.column + j + direction[id][0] < 0 || drop.column + j + direction[id][0] > 15))
+				return;
 	drop.column += direction[id][0];
 }
 
@@ -235,6 +384,13 @@ void eliminate(int index) {
 
 
 // Is this needed?
+/*
+ ........
+ .*......
+ ********
+ ......**
+ ......**
+*/
 void gravity() {
 	int i, j;
 	for (j = 1; j < 24; j++) {
@@ -248,22 +404,22 @@ void gravity() {
 	}
 }
 
-// TODO: The feasibility of rotation.
 void rotateIt() {
-	if (!isDropping || drop.id == 4) return;
-	int tmp[4][4] = { 0 };
-	int i, j;
-	for (i = 0; i < 4; i++)
-		for (j = 0; j < 4; j++) {
-			tmp[i][j] = drop.mat[j][3 - i];
+	if (!isDropping) return;
+	int i, j, k;
+	for (k = 0; k < 4; k++) {
+		bool feasible = 1;
+		drop.direction = (drop.direction + 1) % 4;
+		for (i = 0; i < 4; i++) {
+			for (j = 0; j < 4; j++) {
+				if (Tetriminos[drop.id][drop.direction][i][j] != 0 && (map[drop.row - i][drop.column + j] || drop.row - i < 0 || drop.column + j > 15)) feasible = 0;
+			}
 		}
-	/*
-	1 1 0 0  0 0 0 0
-	1 0 0 0  0 0 0 0
-	1 0 0 0  1 0 0 0
-	0 0 0 0  1 1 1 0
-	*/
-	memcpy(drop.mat, tmp, sizeof(tmp));
+		if (feasible) {
+			memcpy(drop.mat, Tetriminos[drop.id][drop.direction],sizeof(drop.mat));
+			return;
+		}
+	}
 }
 
 void dropToBottom() {
@@ -282,9 +438,23 @@ int findBottomPosition() {
 					return k + 1;
 				}
 				if (map[k - i][drop.column + j]) {
+					
 					return k + 1;
 				}
 			}
 		}
 	}
+	return 0;
+}
+
+void gameOver() {
+	int i, j;
+	for (i = 0; i < 24; i++) {
+		for (j = 0; j < 16; j++) {
+			if (map[i][j]) map[i][j] = 8;
+		}
+	}
+	drop.id = 7;
+	showBlock();
+	cancelTimerEvent(1);
 }
