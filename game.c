@@ -8,6 +8,8 @@
 #define BlockSize 0.5
 #define BlockMargin 0.05
 
+extern int stop;
+extern int start;
 // 0 - 23 rows
 // 0 - 15 column
 // coordinate stand for the bottom-left of the block
@@ -291,7 +293,7 @@ void drawBlockInnerBorder(int row, int column) {
 int speed = 5, count;
 
 void refreshGame() {
-	if (!isDropping) {
+	if ((!isDropping) && (start == 1)) {
 		count = 0;
 		drop.id = (int)(rand() * 10) % 7;
 		memcpy(drop.mat, Tetriminos[drop.id][0], sizeof(drop.mat));
@@ -301,9 +303,12 @@ void refreshGame() {
 		isDropping = 1;
 		return;
 	}
-	if (count == speed) {
+	if ((count == speed) && (stop == 0)) {
 		count = 0;
 		dropIt();
+		return;
+	}
+	if ((count == speed) && (stop == 1)) {
 		return;
 	}
 	count++;

@@ -26,8 +26,8 @@
 #define GameAreaWidth 8
 #define GameAreaHeight 12
 
-static int    stop = 0;   // 允许旋转
-static int    start = 1; // 显示更多按钮
+ int    stop = 0;   
+ int    start = 0; 
 
 void DisplayClear(void);
 void startTimer(int id, int timeinterval);
@@ -100,8 +100,8 @@ void Main() {
 void drawMenu() {
 	static char * menulistGame[] = {
 		"Game",
-		"Start",
-		"Stop",
+		"Start | Ctrl-B",
+		"Stop | Ctrl-S",
 		"Exit | Ctrl-E"
 	};
 	static char * selectedLabel = NULL;
@@ -109,15 +109,15 @@ void drawMenu() {
 	double fH = GetFontHeight();
 	double x = 0; //fH/8;
 	double y = WindowHeight;
-	double h = fH * 1.5; // 控件高度
-	double w = TextStringWidth(menulistGame[0]) * 2; // 控件宽度
+	double h = fH * 1.5; // 鎺т欢楂樺害
+	double w = TextStringWidth(menulistGame[0]) * 2; // 鎺т欢瀹藉害
 	double wlist = TextStringWidth(menulistGame[0])*1.2;
-	double xindent = WindowHeight / 20; // 缩进
+	double xindent = WindowHeight / 20; // 缂╄繘
 	int    selection;
 
-	menulistGame[1] = start ? "Start" : "Restart";
-	menulistGame[2] = stop ? "Resume" : "Stop";
-	selection = menuList(GenUIID(0), x, y - h, w, wlist + 0.5, h, menulistGame, sizeof(menulistGame) / sizeof(menulistGame[0]));
+	menulistGame[1] = start ? "Thanks | Ctrl-B" : "Start | Ctrl-B";
+	menulistGame[2] = stop ? "Resume | Ctrl-S" : "Stop | Ctrl-S";
+	selection = menuList(GenUIID(0), x, y - h, w, wlist + 0.7, h, menulistGame, sizeof(menulistGame) / sizeof(menulistGame[0]));
 	if (selection > 0) selectedLabel = menulistGame[selection];
 	if (selection == 1)
 		start = !start;
