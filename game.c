@@ -1,4 +1,5 @@
 #include "game.h"
+#include "imgui.h"
 
 #define GameStartX 0
 #define GameEndX 8
@@ -6,10 +7,13 @@
 #define GameEndY 12
 
 #define BlockSize 0.5
-#define BlockMargin 0.05
+#define BlockMargin 0.06
 
-extern int stop;
-extern int start;
+#define GameAreaWidth 8
+#define GameAreaHeight 12
+
+extern bool stop;
+extern bool start;
 // 0 - 23 rows
 // 0 - 15 column
 // coordinate stand for the bottom-left of the block
@@ -107,68 +111,46 @@ int Tetriminos[10][4][4][4] = {
 		{ 0,0,0,0 },
 		{ 0,0,0,0 } }
 	},
-	
-	{
-		{ {0, 5, 0, 0},
-		{ 5,5,0,0 },
-		{ 5,0,0,0 },
-		{ 0,0,0,0 }},
-
-		{ {0,0,0,0},
-		{ 5,5,0,0 },
-		{ 0,5,5,0 },
-		{ 0,0,0,0 } },
-
-		{ {0,0,5,0 },
-		{ 0,5,5,0 },
-		{ 0,5,0,0 },
-		{ 0,0,0,0 } },
-
-		{ {5,5,0,0},
-		{ 0,5,5,0 },
-		{ 0,0,0,0 },
-		{ 0,0,0,0 } }
-	},
 
 	{
-		{ {6, 6, 0, 0},
-		{ 6,6,0,0 },
+		{ {5, 5, 0, 0},
+		{ 5,5,0,0 },
 		{ 0,0,0,0 },
 		{ 0,0,0,0 }},
 
-		{ {6, 6, 0, 0},
-		{ 6,6,0,0 },
+		{ {5, 5, 0, 0},
+		{ 5,5,0,0 },
 		{ 0,0,0,0 },
 		{ 0,0,0,0 }},
 
-		{ {6, 6, 0, 0},
-		{ 6,6,0,0 },
+		{ {5, 5, 0, 0},
+		{ 5,5,0,0 },
 		{ 0,0,0,0 },
 		{ 0,0,0,0 }},
 
-		{ {6, 6, 0, 0},
-		{ 6,6,0,0 },
+		{ {5, 5, 0, 0},
+		{ 5,5,0,0 },
 		{ 0,0,0,0 },
 		{ 0,0,0,0 }}
 	},
 
 	{
-		{ {7, 0, 0, 0},
-		{ 7,0,0,0 },
-		{ 7,0,0,0 },
-		{ 7,0,0,0 }},
+		{ {6, 0, 0, 0},
+		{ 6,0,0,0 },
+		{ 6,0,0,0 },
+		{ 6,0,0,0 }},
 
-		{ {7, 7, 7, 7},
+		{ {6, 6, 6, 6},
 		{ 0,0,0,0 },
 		{ 0,0,0,0 },
 		{ 0,0,0,0 }},
 
-		{ {7, 0, 0, 0},
-		{ 7,0,0,0 },
-		{ 7,0,0,0 },
-		{ 7,0,0,0 }},
+		{ {6, 0, 0, 0},
+		{ 6,0,0,0 },
+		{ 6,0,0,0 },
+		{ 6,0,0,0 }},
 
-		{ {7, 7, 7, 7},
+		{ {6, 6, 6, 6},
 		{ 0,0,0,0 },
 		{ 0,0,0,0 },
 		{ 0,0,0,0 }},
@@ -204,14 +186,17 @@ struct Dropping {
 	int mat[4][4];
 } drop;
 
-bool isDropping;
+struct Game {
+	bool isDropping;
+	int score;
+} game;
 
 void showBlock() {
 	int i, j;
 	for (i = 0; i < 24; i++)
 		for (j = 0; j < 16; j++)
 			if (map[i][j] != 0) drawBlock(map[i][j], i, j, 0);
-	if (isDropping) {
+	if (game.isDropping) {
 		int bottom = findBottomPosition();
 		for (i = 0; i < 4; i++)
 			for (j = 0; j < 4; j++) {
@@ -226,6 +211,14 @@ void showBlock() {
 				}
 			}
 	}
+}
+
+void drawGameArea() {
+	SetPenColor("red");
+	SetPenSize(3);
+	MovePen(GameAreaWidth, 0);
+	DrawLine(0, GameAreaHeight);
+	DrawLine(-GameAreaHeight, 0);
 }
 
 void drawBlock(int color, int row, int column,int isHint) {
@@ -281,26 +274,20 @@ void drawBlockOuterBorder(int row, int column) {
 }
 
 void drawBlockInnerBorder(int row, int column) {
-	SetPenSize(1);
-	// TODO: Figure out why there are minor adjustments.
-	MovePen(column*BlockSize+BlockMargin-0.005, row*BlockSize+BlockMargin+0.005);
-	DrawLine(BlockSize-2*BlockMargin, 0);
-	DrawLine(0, BlockSize-2*BlockMargin);
-	DrawLine(-BlockSize+2*BlockMargin, 0);
-	DrawLine(0, -BlockSize+2*BlockMargin);
+	drawRectangle(column*BlockSize + BlockMargin - 0.005, row*BlockSize + BlockMargin + 0.005, BlockSize - 2 * BlockMargin, BlockSize - 2 * BlockMargin, 1);
 }
 
 int speed = 5, count;
 
 void refreshGame() {
-	if ((!isDropping) && (start == 1)) {
+	if ((!game.isDropping) && (start == 1)) {
 		count = 0;
 		drop.id = (int)(rand() * 10) % 7;
 		memcpy(drop.mat, Tetriminos[drop.id][0], sizeof(drop.mat));
 		drop.direction = 0;
 		drop.column = 6;
 		drop.row = 24;
-		isDropping = 1;
+		game.isDropping = 1;
 		return;
 	}
 	if ((count == speed) && (stop == 0)) {
@@ -336,7 +323,7 @@ void fixIt() {
 			}
 			map[drop.row - i][drop.column + j] = drop.id + 1;
 		}
-	isDropping = 0;
+	game.isDropping = 0;
 	while (checkForElimination());
 }
 
@@ -405,7 +392,7 @@ void gravity() {
 }
 
 void rotateIt() {
-	if (!isDropping) return;
+	if (!game.isDropping) return;
 	int i, j, k;
 	for (k = 0; k < 4; k++) {
 		bool feasible = 1;

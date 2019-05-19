@@ -21,6 +21,7 @@
 void refreshGame();
 
 void showBlock();
+void drawGameArea();
 void drawBlock(int color, int row, int column);
 void drawHintBlock(int row, int column);
 void drawBlockOuterBorder(int row, int column);
