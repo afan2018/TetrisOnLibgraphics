@@ -1,5 +1,6 @@
 #include "game.h"
 #include "imgui.h"
+#include "graphics.h"
 
 #define GameStartX 0
 #define GameEndX 8
@@ -12,8 +13,6 @@
 #define GameAreaWidth 8
 #define GameAreaHeight 12
 
-extern bool stop;
-extern bool start;
 // 0 - 23 rows
 // 0 - 15 column
 // coordinate stand for the bottom-left of the block
@@ -188,6 +187,7 @@ struct Dropping {
 
 struct Game {
 	bool isDropping;
+	bool isGaming;
 	int score;
 } game;
 
@@ -277,10 +277,17 @@ void drawBlockInnerBorder(int row, int column) {
 	drawRectangle(column*BlockSize + BlockMargin - 0.005, row*BlockSize + BlockMargin + 0.005, BlockSize - 2 * BlockMargin, BlockSize - 2 * BlockMargin, 1);
 }
 
+void drawScoreboard() {
+	SetPenColor("red");
+	drawBox(9, 10.5, 2, 1, 0, numToString(game.score), "L", "red");
+	MovePen(9.55, 11.7);
+	DrawTextString("SCORE");
+}
+
 int speed = 5, count;
 
 void refreshGame() {
-	if ((!game.isDropping) && (start == 1)) {
+	if (!game.isDropping) {
 		count = 0;
 		drop.id = (int)(rand() * 10) % 7;
 		memcpy(drop.mat, Tetriminos[drop.id][0], sizeof(drop.mat));
@@ -290,12 +297,9 @@ void refreshGame() {
 		game.isDropping = 1;
 		return;
 	}
-	if ((count == speed) && (stop == 0)) {
+	if (count == speed) {
 		count = 0;
 		dropIt();
-		return;
-	}
-	if ((count == speed) && (stop == 1)) {
 		return;
 	}
 	count++;
@@ -338,8 +342,7 @@ void moveIt(int id) {
 }
 
 bool checkForElimination() {
-	int i, j;
-	bool didSomething = 0;
+	int i, j, elimRowCounter = 0;
 	for (i = 0; i < 24; i++) {
 		bool elimAble = 1;
 		for (j = 0; j < 16; j++) {
@@ -349,12 +352,13 @@ bool checkForElimination() {
 			}
 		}
 		if (elimAble) {
-			didSomething = 1;
+			elimRowCounter++;
 			eliminate(i);
 			//gravity();
 		}
 	}
-	return didSomething;
+	scoreIt(elimRowCounter, 0);
+	return elimRowCounter != 0;
 }
 
 void eliminate(int index) {
@@ -410,7 +414,9 @@ void rotateIt() {
 }
 
 void dropToBottom() {
-	drop.row = findBottomPosition();
+	int bottom = findBottomPosition();
+	scoreIt(drop.row - bottom, 1);
+	drop.row = bottom;
 	fixIt();
 }
 
@@ -434,6 +440,19 @@ int findBottomPosition() {
 	return 0;
 }
 
+void newGame() {
+	game.isGaming = 1;
+	game.isDropping = 0;
+	game.score = 0;
+	memset(map, 0, sizeof(map));
+	startTimer(1, 100);
+}
+
+int switchGame(bool isPause) {
+	if (!game.isGaming) return -1;
+	isPause ? cancelTimer(1) : startTimer(1, 100);
+}
+
 void gameOver() {
 	int i, j;
 	for (i = 0; i < 24; i++) {
@@ -443,5 +462,28 @@ void gameOver() {
 	}
 	drop.id = 7;
 	showBlock();
-	cancelTimerEvent(1);
+	game.isGaming = 0;
+	cancelTimer(1);
+}
+
+int addScore[5] = { 0,100,200,400,800 };
+
+void scoreIt(int count, int flag) {
+	game.score += flag ? count : addScore[count];
+}
+
+char* numToString(int x) {
+	if (x == 0) return "0";
+	static char str[15];
+	int digit[15] = { 0 }, i, top=0;
+	while (x) {
+		digit[top] = x % 10;
+		x /= 10;
+		top++;
+	}
+	for (i = top - 1; i >= 0; i--) {
+		str[top - i - 1] = digit[i] + '0';
+	}
+	str[top] = '\0';
+	return str;
 }

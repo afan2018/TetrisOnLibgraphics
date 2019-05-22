@@ -6,9 +6,7 @@
 #define WindowHeight 12.5
 
 void DisplayClear(void);
-void startTimer(int id, int timeinterval);
 void display(void);
-void drawBackground(void);
 void drawGameArea(void);
 
 void CharEventProcess(char ch) {
@@ -62,15 +60,13 @@ void Main() {
 	SetWindowSize(WindowWidth, WindowHeight);
 
 	InitGraphics();
-	// InitConsole();
+	//InitConsole();
 	srand(time(NULL));
 
 	registerCharEvent(CharEventProcess);
 	registerKeyboardEvent(KeyboardEventProcess);
 	registerMouseEvent(MouseEventProcess);
 	registerTimerEvent(TimerEventProcess);
-
-	startTimer(GAME_REFRESH_TIMER, 100);
 }
 
 void drawGlobalBackground() {
@@ -84,4 +80,5 @@ void display() {
 	drawGameArea();
 	showBlock();
 	drawMenu();
+	drawScoreboard();
 }

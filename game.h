@@ -26,6 +26,7 @@ void drawBlock(int color, int row, int column);
 void drawHintBlock(int row, int column);
 void drawBlockOuterBorder(int row, int column);
 void drawBlockInnerBorder(int row, int column);
+void drawScoreboard();
 
 void dropIt();
 void fixIt();
@@ -33,9 +34,15 @@ void moveIt(int direction);
 void rotateIt();
 void dropToBottom();
 int findBottomPosition();
+void scoreIt(int count,int flag);
 
 bool checkForElimination();
 void eliminate(int index);
 void gravity();
 
+void newGame();
+int switchGame(bool isPause);
 void gameOver();
+
+char* numToString(int x);
+int getGameScore();
