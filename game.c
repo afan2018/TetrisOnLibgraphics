@@ -189,6 +189,8 @@ struct Game {
 	bool isDropping;
 	bool isGaming;
 	int score;
+	int level;
+	int elimRowCounter;
 } game;
 
 void showBlock() {
@@ -210,6 +212,7 @@ void showBlock() {
 					drawBlock(drop.id + 1, drop.row - i, drop.column + j, 0);
 				}
 			}
+		if (bottom > 18) drawDanger(0);
 	}
 }
 
@@ -279,12 +282,34 @@ void drawBlockInnerBorder(int row, int column) {
 
 void drawScoreboard() {
 	SetPenColor("red");
-	drawBox(9, 10.5, 2, 1, 0, numToString(game.score), "L", "red");
+	drawBox(9, 10.5, 2, 1, 0, game.isGaming ? numToString(game.score) : "HAPPY", "L", "red");
 	MovePen(9.55, 11.7);
 	DrawTextString("SCORE");
 }
 
-int speed = 5, count;
+void drawLevelboard() {
+	SetPenColor("blue");
+	drawBox(9, 8.8, 2, 1, 0, game.isGaming ? numToString(game.level) : "HAPPY", "L", "blue");
+	MovePen(9.6, 10);
+	DrawTextString("LEVEL");
+}
+
+int goal[10] = { 0,5,10,15,20,20,20,20,20,20 };
+
+void drawGoalboard() {
+	SetPenColor("blue");
+	drawBox(9, 7, 2, 1, 0, game.isGaming ? numToString(goal[game.level] - game.elimRowCounter) : "TETRIS!", "L", "blue");
+	MovePen(9.65, 8.2);
+	DrawTextString("GOAL");
+}
+
+void drawDanger(int flag) {
+	SetPenColor("red");
+	MovePen(9.8, 6);
+	flag ? DrawTextString("ËÀ") : DrawTextString("Î£");
+}
+
+int speed = 10, count;
 
 void refreshGame() {
 	if (!game.isDropping) {
@@ -297,7 +322,7 @@ void refreshGame() {
 		game.isDropping = 1;
 		return;
 	}
-	if (count == speed) {
+	if (count == speed - game.level) {
 		count = 0;
 		dropIt();
 		return;
@@ -329,6 +354,7 @@ void fixIt() {
 		}
 	game.isDropping = 0;
 	while (checkForElimination());
+	checkForLevelUp();
 }
 
 void moveIt(int id) {
@@ -358,6 +384,7 @@ bool checkForElimination() {
 		}
 	}
 	scoreIt(elimRowCounter, 0);
+	game.elimRowCounter += elimRowCounter;
 	return elimRowCounter != 0;
 }
 
@@ -373,6 +400,14 @@ void eliminate(int index) {
 	}
 }
 
+
+
+void checkForLevelUp() {
+	if (game.elimRowCounter >= goal[game.level]) {
+		game.elimRowCounter -= goal[game.level];
+		game.level++;
+	}
+}
 
 // Is this needed?
 /*
@@ -444,13 +479,15 @@ void newGame() {
 	game.isGaming = 1;
 	game.isDropping = 0;
 	game.score = 0;
+	game.elimRowCounter = 0;
+	game.level = 1;
 	memset(map, 0, sizeof(map));
-	startTimer(1, 100);
+	startTimer(1, 40);
 }
 
 int switchGame(bool isPause) {
 	if (!game.isGaming) return -1;
-	isPause ? cancelTimer(1) : startTimer(1, 100);
+	isPause ? cancelTimer(1) : startTimer(1, 40);
 }
 
 void gameOver() {
@@ -469,7 +506,7 @@ void gameOver() {
 int addScore[5] = { 0,100,200,400,800 };
 
 void scoreIt(int count, int flag) {
-	game.score += flag ? count : addScore[count];
+	game.score += (flag ? count : addScore[count]) * game.level;
 }
 
 char* numToString(int x) {

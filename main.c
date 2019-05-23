@@ -81,4 +81,6 @@ void display() {
 	showBlock();
 	drawMenu();
 	drawScoreboard();
+	drawLevelboard();
+	drawGoalboard();
 }
