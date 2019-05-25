@@ -1,6 +1,7 @@
 #include "imgui.h"
 #include "game.h"
 #include "menu.h"
+#include "data.h"
 
 #define WindowWidth 12
 #define WindowHeight 12.5
@@ -60,19 +61,23 @@ void Main() {
 	SetWindowSize(WindowWidth, WindowHeight);
 
 	InitGraphics();
-	//InitConsole();
+	InitConsole();
 	srand(time(NULL));
 
 	registerCharEvent(CharEventProcess);
 	registerKeyboardEvent(KeyboardEventProcess);
 	registerMouseEvent(MouseEventProcess);
 	registerTimerEvent(TimerEventProcess);
+
+	init();
 }
 
 void drawGlobalBackground() {
 	SetPenColor("black");
 	drawRectangle(0, 0, WindowWidth, WindowHeight, 1);
 }
+
+extern int popNameQuery;
 
 void display() {
 	DisplayClear();
@@ -83,4 +88,5 @@ void display() {
 	drawScoreboard();
 	drawLevelboard();
 	drawGoalboard();
+	if (popNameQuery) drawNameQuery();
 }

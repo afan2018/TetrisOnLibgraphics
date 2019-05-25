@@ -178,6 +178,8 @@ int Tetriminos[10][4][4][4] = {
 	}
 };
 
+int popNameQuery = 0;
+
 struct Dropping {
 	// id stands for the kind of tetrimino of which the dropping one is
 	// x, y stand for the top-left of the dropping tetrimino matrix
@@ -191,6 +193,7 @@ struct Game {
 	int score;
 	int level;
 	int elimRowCounter;
+	char usrName[25];
 } game;
 
 void showBlock() {
@@ -294,6 +297,23 @@ void drawLevelboard() {
 	DrawTextString("LEVEL");
 }
 
+void drawNameQuery() {
+	SetPenColor("black");
+	drawRectangle(3, 5, 6, 3, 1);
+	SetPenColor("red");
+	drawRectangle(3, 5, 6, 3, 0);
+	static char name[25] = "";
+	textbox(GenUIID(0), 4, 6.4, 4, 0.5, name, sizeof(name));
+	MovePen(4.6, 7.2);
+	DrawTextString("TELL ME YOUR NAME");
+	if (button(GenUIID(0), 5, 5.4, 2, 0.5, "OK")) {
+		strcpy(game.usrName, name);
+		strcpy(name, "");
+		popNameQuery = 0;
+		saveScoreData(game.score, game.level, game.usrName);
+	}
+}
+
 int goal[10] = { 0,5,10,15,20,20,20,20,20,20 };
 
 void drawGoalboard() {
@@ -312,6 +332,7 @@ void drawDanger(int flag) {
 int speed = 10, count;
 
 void refreshGame() {
+	if (!game.isGaming) return;
 	if (!game.isDropping) {
 		count = 0;
 		drop.id = (int)(rand() * 10) % 7;
@@ -501,6 +522,7 @@ void gameOver() {
 	showBlock();
 	game.isGaming = 0;
 	cancelTimer(1);
+	popNameQuery = 1;
 }
 
 int addScore[5] = { 0,100,200,400,800 };

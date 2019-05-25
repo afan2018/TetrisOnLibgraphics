@@ -30,6 +30,7 @@ void drawScoreboard();
 void drawLevelboard();
 void drawGoalboard();
 void drawDanger(int flag);
+void drawNameQuery();
 
 void dropIt();
 void fixIt();
