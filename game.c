@@ -303,14 +303,17 @@ void drawNameQuery() {
 	SetPenColor("red");
 	drawRectangle(3, 5, 6, 3, 0);
 	static char name[25] = "";
-	textbox(GenUIID(0), 4, 6.4, 4, 0.5, name, sizeof(name));
-	MovePen(4.6, 7.2);
+	textbox(GenUIID(0), 4, 6.2, 4, 0.5, name, sizeof(name));
+	MovePen(4.6, 7);
 	DrawTextString("TELL ME YOUR NAME");
+	MovePen(5.2, 7.5);
+	DrawTextString("GAME OVER");
 	if (button(GenUIID(0), 5, 5.4, 2, 0.5, "OK")) {
 		strcpy(game.usrName, name);
 		strcpy(name, "");
 		popNameQuery = 0;
 		saveScoreData(game.score, game.level, game.usrName);
+		game.isGaming = 0;
 	}
 }
 
@@ -520,7 +523,6 @@ void gameOver() {
 	}
 	drop.id = 7;
 	showBlock();
-	game.isGaming = 0;
 	cancelTimer(1);
 	popNameQuery = 1;
 }

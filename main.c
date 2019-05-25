@@ -69,7 +69,7 @@ void Main() {
 	registerMouseEvent(MouseEventProcess);
 	registerTimerEvent(TimerEventProcess);
 
-	init();
+	initData();
 }
 
 void drawGlobalBackground() {
@@ -78,6 +78,7 @@ void drawGlobalBackground() {
 }
 
 extern int popNameQuery;
+extern int popRanklist;
 
 void display() {
 	DisplayClear();
@@ -88,5 +89,6 @@ void display() {
 	drawScoreboard();
 	drawLevelboard();
 	drawGoalboard();
+	if (popRanklist) drawRanklist();
 	if (popNameQuery) drawNameQuery();
 }

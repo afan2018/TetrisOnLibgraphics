@@ -6,6 +6,8 @@
 
 bool pauseButtonStatus;
 
+int popRanklist = 0;
+
 void drawMenu() {
 	static char * menulistGame[] = {
 		"Game",
@@ -16,7 +18,6 @@ void drawMenu() {
 		"Themes",
 		"Exit",
 	};
-	static char * selectedLabel = NULL;
 
 	double fH = GetFontHeight();
 	double x = 0; //fH/8;
@@ -29,13 +30,19 @@ void drawMenu() {
 
 	menulistGame[2] = pauseButtonStatus ? "Resume | Ctrl-S" : "Pause | Ctrl-S";
 	selection = menuList(GenUIID(0), x, y - h, w, wlist + 0.7, h, menulistGame, sizeof(menulistGame) / sizeof(menulistGame[0]));
-	if (selection > 0) selectedLabel = menulistGame[selection];
-	if (selection == 1) {
+	switch (selection) {
+	case 1:
 		newGame();
 		pauseButtonStatus = 0;
+		break;
+	case 2:
+		if (switchGame(!pauseButtonStatus) != -1)
+			pauseButtonStatus = !pauseButtonStatus;
+		break;
+	case 3:
+		popRanklist = 1;
+		break;
+	case 6:
+		exit(-1);
 	}
-	if (selection == 2) {
-		if (switchGame(!pauseButtonStatus) != -1) pauseButtonStatus = !pauseButtonStatus;
-	}
-	if (selection == 6) exit(-1); // choose to exit
 }
