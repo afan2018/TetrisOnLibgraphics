@@ -61,7 +61,7 @@ void Main() {
 	SetWindowSize(WindowWidth, WindowHeight);
 
 	InitGraphics();
-	InitConsole();
+//	InitConsole();
 	srand(time(NULL));
 
 	registerCharEvent(CharEventProcess);

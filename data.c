@@ -4,9 +4,7 @@
 
 linkedlistADT usrData;
 
-void initData() {
-	usrData = NewLinkedList();
-}
+FILE* fw;
 
 typedef struct {
 	int score;
@@ -14,10 +12,27 @@ typedef struct {
 	char name[25];
 } ScoreData;
 
-int totalUsr;
+void initData() {
+	usrData = NewLinkedList(); 
+	fw = fopen("score.dat", "r+");
+	if (fw == NULL) {
+		fw = fopen("score.dat", "w+");
+		fprintf(fw, "* -1 -1");
+		return;
+	}
+	else {
+		while (!feof(fw)) {
+			ScoreData *nData = malloc(sizeof(ScoreData));
+			fscanf(fw, "%s %d %d", nData->name, &nData->level, &nData->score);
+			if (nData->level == -1) break;
+			InsertNode(usrData, NULL, nData);
+		}
+	}
+	fclose(fw);
+}
 
 void print(ScoreData* x) {
-	printf("%s %d %d\n", x->name, x->score, x->level);
+	fprintf(fw, "%s %d %d\n", x->name, x->level, x->score);
 }
 
 extern int popRanklist;
@@ -38,6 +53,11 @@ void drawRanklist() {
 	SetPenColor("white");
 	linkedlistADT cur = usrData;
 	int cnt = 0;
+	
+	if (cur->next == NULL) {
+		MovePen(5.2, 6);
+		DrawTextString("NO RECORD");
+	}
 	while (cur->next != NULL && cnt < 8) {
 		ScoreData *nextData = cur->next->dataptr;
 		cnt++;
@@ -63,6 +83,7 @@ void saveScoreData(int score, int level, char* name) {
 	strcpy(nData->name, name, sizeof(name));
 	if (usrData->next == NULL) {
 		InsertNode(usrData, usrData, nData);
+		writeScoreData();
 		return;
 	}
 	linkedlistADT cur = usrData;
@@ -70,10 +91,18 @@ void saveScoreData(int score, int level, char* name) {
 		ScoreData *nextData = cur->next->dataptr;
 		if (nextData->score <= nData->score) {
 			InsertNode(usrData, cur, nData);
+			writeScoreData();
 			return;
 		}
 		cur = cur->next;
 	}
 	InsertNode(usrData, cur, nData);
+	writeScoreData();
 }
 
+void writeScoreData() {
+	fw = fopen("score.dat", "w+");
+	TraverseLinkedList(usrData, print);
+	fprintf(fw, "* -1 -1");
+	fclose(fw);
+}
