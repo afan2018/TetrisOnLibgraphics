@@ -18,6 +18,27 @@
 #include <ocidl.h>
 #include <winuser.h>
 
+#ifndef _def
+#define _def
+typedef struct {
+	bool isDropping;
+	bool isGaming;
+	int score;
+	int level;
+	int elimRowCounter;
+	char usrName[25];
+} Game;
+
+typedef struct {
+	// id stands for the kind of tetrimino of which the dropping one is
+	// x, y stand for the top-left of the dropping tetrimino matrix
+	int id, column, row, direction;
+	int mat[4][4];
+} Dropping;
+#endif // !_def
+
+
+
 void refreshGame();
 
 void showBlock();

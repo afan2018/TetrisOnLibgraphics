@@ -79,6 +79,7 @@ void drawGlobalBackground() {
 
 extern int popNameQuery;
 extern int popRanklist;
+extern int popContinueQuery;
 
 void display() {
 	DisplayClear();
@@ -91,4 +92,5 @@ void display() {
 	drawGoalboard();
 	if (popRanklist) drawRanklist();
 	if (popNameQuery) drawNameQuery();
+	if (popContinueQuery) drawContinueQuery();
 }

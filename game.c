@@ -1,6 +1,7 @@
 #include "game.h"
 #include "imgui.h"
 #include "graphics.h"
+#include "data.h"
 
 #define GameStartX 0
 #define GameEndX 8
@@ -180,21 +181,9 @@ int Tetriminos[10][4][4][4] = {
 
 int popNameQuery = 0;
 
-struct Dropping {
-	// id stands for the kind of tetrimino of which the dropping one is
-	// x, y stand for the top-left of the dropping tetrimino matrix
-	int id, column, row, direction;
-	int mat[4][4];
-} drop;
+Dropping drop;
 
-struct Game {
-	bool isDropping;
-	bool isGaming;
-	int score;
-	int level;
-	int elimRowCounter;
-	char usrName[25];
-} game;
+Game game;
 
 void showBlock() {
 	int i, j;
@@ -312,7 +301,7 @@ void drawNameQuery() {
 		strcpy(game.usrName, name);
 		strcpy(name, "");
 		popNameQuery = 0;
-		saveScoreData(game.score, game.level, game.usrName);
+		saveScoreData();
 		game.isGaming = 0;
 	}
 }
@@ -490,7 +479,6 @@ int findBottomPosition() {
 					return k + 1;
 				}
 				if (map[k - i][drop.column + j]) {
-					
 					return k + 1;
 				}
 			}
@@ -507,11 +495,16 @@ void newGame() {
 	game.level = 1;
 	memset(map, 0, sizeof(map));
 	startTimer(1, 40);
+	erase();
 }
 
 int switchGame(bool isPause) {
 	if (!game.isGaming) return -1;
-	isPause ? cancelTimer(1) : startTimer(1, 40);
+	if (isPause) {
+		cancelTimer(1);
+		writeGameData();
+	}
+	else startTimer(1, 40);
 }
 
 void gameOver() {
