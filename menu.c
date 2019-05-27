@@ -7,6 +7,7 @@
 bool pauseButtonStatus = 0;
 
 int popRanklist = 0;
+int theme = 1;
 
 void drawMenu() {
 	static char * menulistGame[] = {
@@ -47,6 +48,9 @@ void drawMenu() {
 		break;
 	case 3:
 		popRanklist = 1;
+		break;
+	case 5:
+		theme = !theme;
 		break;
 	case 6:
 		exit(-1);

@@ -85,7 +85,7 @@ void Main() {
 	SetWindowSize(WindowWidth, WindowHeight);
 
 	InitGraphics();
-	InitConsole();
+//	InitConsole();
 	srand(time(NULL));
 
 	registerCharEvent(CharEventProcess);
@@ -98,14 +98,17 @@ void Main() {
 	initData();
 }
 
+extern int theme;
+
 void drawGlobalBackground() {
-	SetPenColor("black");
+	SetPenColor(theme ? "black" : "light gray");
 	drawRectangle(0, 0, WindowWidth, WindowHeight, 1);
 }
 
 extern int popNameQuery;
 extern int popRanklist;
 extern int popContinueQuery;
+
 
 void display() {
 	DisplayClear();

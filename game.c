@@ -215,6 +215,8 @@ void drawGameArea() {
 	DrawLine(-GameAreaHeight, 0);
 }
 
+extern int theme;
+
 void drawBlock(int color, int row, int column,bool isHint) {
 	switch (color) {
 	case 1:
@@ -236,7 +238,7 @@ void drawBlock(int color, int row, int column,bool isHint) {
 		SetPenColor("green");
 		break;
 	case 7:
-		SetPenColor("white");
+		SetPenColor(theme ? "white" : "black");
 		break;
 	case 8:
 		SetPenColor("dark gray");
@@ -347,7 +349,7 @@ void createDropping() {
 }
 
 void moveIt(int id) {
-	if (!game.isDropping) return;
+	if (!game.isDropping || id > 1) return;
 	int direction[5][2] = { {-1},{1} };
 	int i, j;
 	for (i = 0; i < 4; i++)
@@ -422,18 +424,23 @@ void gravity() {
 
 void rotateIt() {
 	if (!game.isDropping) return;
-	int i, j, k;
-	for (k = 0; k < 4; k++) {
-		bool feasible = 1;
-		drop.direction = (drop.direction + 1) % 4;
-		for (i = 0; i < 4; i++) {
-			for (j = 0; j < 4; j++) {
-				if (Tetriminos[drop.id][drop.direction][i][j] != 0 && (map[drop.row - i][drop.column + j] || drop.row - i < 0 || drop.column + j > 15)) feasible = 0;
+	int i, j, k, l, py[3] = { 0,1,-1 };
+	if (drop.id == 5) py[1] = 3, py[2] = -3;
+	for (l = 0; l <= 2; l++) {
+		for (k = 0; k < (drop.id == 5 ? 1 : 3); k++) {
+			bool feasible = 1;
+			drop.direction = (drop.direction + 1) % 4;
+			for (i = 0; i < 4; i++) {
+				for (j = 0; j < 4; j++) {
+					if (Tetriminos[drop.id][drop.direction][i][j] != 0 && (map[drop.row - i][drop.column + py[l] + j] || drop.row - i < 0 || drop.column + py[l] + j > 15))
+						feasible = 0;
+				}
 			}
-		}
-		if (feasible) {
-			memcpy(drop.mat, Tetriminos[drop.id][drop.direction],sizeof(drop.mat));
-			return;
+			if (feasible) {
+				drop.column += py[l];
+				memcpy(drop.mat, Tetriminos[drop.id][drop.direction],sizeof(drop.mat));
+				return;
+			}
 		}
 	}
 }
@@ -484,6 +491,7 @@ int switchGame(bool isPause) {
 		game.isDropping = 0;
 	}
 	else game.isDropping = 1;
+	return 0;
 }
 
 void gameOver() {
@@ -523,7 +531,7 @@ char* numToString(int x) {
 }
 
 void holdDropping() {
-	if (usedHold) return;
+	if (usedHold || !game.isDropping) return;
 	if (drop.hold == -1) {
 		drop.hold = drop.id;
 		createDropping();
