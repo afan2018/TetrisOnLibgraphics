@@ -4,12 +4,6 @@ linkedlistADT usrData;
 
 FILE* fw;
 
-typedef struct {
-	int score;
-	int level;
-	char name[25];
-} ScoreData;
-
 extern Game game;
 extern Dropping drop;
 extern int map[24][16];

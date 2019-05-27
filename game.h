@@ -18,8 +18,9 @@
 #include <ocidl.h>
 #include <winuser.h>
 
-#ifndef _def
-#define _def
+#ifndef _defGD
+#define _defGD
+
 typedef struct {
 	bool isDropping;
 	bool isGaming;
@@ -35,26 +36,18 @@ typedef struct {
 	int id, next, hold, column, row, direction;
 	int mat[4][4];
 } Dropping;
+
 #endif // !_def
-
-
 
 void refreshGame();
 
 void showBlock();
 void drawGameArea();
-void drawBlock(int color, int row, int column);
+void drawBlock(int color, int row, int column, bool isHint);
 void drawHintBlock(int row, int column);
 void drawBlockOuterBorder(int row, int column);
 void drawBlockInnerBorder(int row, int column);
-void drawScoreboard();
-void drawLevelboard();
-void drawGoalboard();
-void drawDanger(int flag);
 void drawNameQuery();
-void drawPause();
-void drawNextDropping();
-void drawHoldDropping();
 
 void dropIt();
 void fixIt();
