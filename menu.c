@@ -4,19 +4,25 @@
 #define WindowWidth 12
 #define WindowHeight 12.5
 
-bool pauseButtonStatus;
+bool pauseButtonStatus = 0;
 
 int popRanklist = 0;
 
 void drawMenu() {
 	static char * menulistGame[] = {
 		"Game",
-		"New Game | Ctrl-B",
-		"Pause | Ctrl-S",
+		"New Game | Ctrl-N",
+		"Pause | Ctrl-P",
 		"Ranklist | Ctrl-E",
 		"Preferences",
 		"Themes",
-		"Exit",
+		"Exit"
+	};
+
+	static char * menulistHelp[] = {
+		"Help",
+		"Read Help",
+		"About"
 	};
 
 	double fH = GetFontHeight();
@@ -44,5 +50,12 @@ void drawMenu() {
 		break;
 	case 6:
 		exit(-1);
+	}
+	selection = menuList(GenUIID(0), x + w, y - h, w, wlist + 0.4, h, menulistHelp, sizeof(menulistHelp) / sizeof(menulistGame[0]));
+	switch (selection) {
+	case 1:
+		break;
+	case 2:
+		break;
 	}
 }

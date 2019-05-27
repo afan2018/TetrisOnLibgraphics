@@ -35,6 +35,9 @@ void KeyboardEventProcess(int key, int event) {
 		case VK_SPACE:
 			dropToBottom();
 			break;
+		case VK_SHIFT:
+			holdDropping();
+			break;
 		}
 	case KEY_UP:
 		break;
@@ -61,13 +64,15 @@ void Main() {
 	SetWindowSize(WindowWidth, WindowHeight);
 
 	InitGraphics();
-//	InitConsole();
+	InitConsole();
 	srand(time(NULL));
 
 	registerCharEvent(CharEventProcess);
 	registerKeyboardEvent(KeyboardEventProcess);
 	registerMouseEvent(MouseEventProcess);
 	registerTimerEvent(TimerEventProcess);
+
+	startTimer(1, 40);
 
 	initData();
 }
@@ -90,6 +95,8 @@ void display() {
 	drawScoreboard();
 	drawLevelboard();
 	drawGoalboard();
+	drawNextDropping();
+	drawHoldDropping();
 	if (popRanklist) drawRanklist();
 	if (popNameQuery) drawNameQuery();
 	if (popContinueQuery) drawContinueQuery();

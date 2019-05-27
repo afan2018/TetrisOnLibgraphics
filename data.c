@@ -44,10 +44,12 @@ bool detectSavedGame() {
 	return 1;
 }
 
+extern bool pauseButtonStatus;
+
 void loadGame() {
 	fw = fopen("game.dat", "r+");
 	fscanf(fw, "%d %d %d", &game.level, &game.score, &game.elimRowCounter);
-	fscanf(fw, "%d %d %d %d", &drop.column, &drop.row, &drop.direction, &drop.id);
+	fscanf(fw, "%d %d %d %d %d %d", &drop.column, &drop.row, &drop.direction, &drop.id, &drop.next, &drop.hold);
 	int i, j;
 	for (i = 0; i < 4; i++) {
 		for (j = 0; j < 4; j++) {
@@ -62,6 +64,7 @@ void loadGame() {
 	fclose(fw);
 	game.isGaming = 1;
 	game.isDropping = 0;
+	pauseButtonStatus = 1;
 	strcpy(game.usrName, "");
 }
 
@@ -120,7 +123,7 @@ void saveScoreData() {
 	ScoreData *nData = malloc(sizeof(ScoreData));
 	nData->score = game.score;
 	nData->level = game.level;
-	strcpy(nData->name, game.usrName, sizeof(game.usrName));
+	strcpy(nData->name, game.usrName);
 	if (usrData->next == NULL) {
 		InsertNode(usrData, usrData, nData);
 		writeScoreData();
@@ -150,7 +153,7 @@ void writeScoreData() {
 void writeGameData() {
 	fw = fopen("game.dat", "w+");
 	fprintf(fw, "%d %d %d\n", game.level, game.score, game.elimRowCounter);
-	fprintf(fw, "%d %d %d %d\n", drop.column, drop.row, drop.direction, drop.id);
+	fprintf(fw, "%d %d %d %d %d %d\n", drop.column, drop.row, drop.direction, drop.id, drop.next, drop.hold);
 	int i, j;
 	for (i = 0; i < 4; i++) {
 		for (j = 0; j < 4; j++) {

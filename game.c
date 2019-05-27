@@ -190,22 +190,21 @@ void showBlock() {
 	for (i = 0; i < 24; i++)
 		for (j = 0; j < 16; j++)
 			if (map[i][j] != 0) drawBlock(map[i][j], i, j, 0);
-	if (game.isDropping) {
-		int bottom = findBottomPosition();
-		for (i = 0; i < 4; i++)
-			for (j = 0; j < 4; j++) {
-				if (drop.mat[i][j] != 0 && bottom - i < 24) {
-					drawBlock(8, bottom - i, drop.column + j, 1);
-				}
+	int bottom = findBottomPosition();
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++) {
+			if (drop.mat[i][j] != 0 && bottom - i < 24) {
+				drawBlock(8, bottom - i, drop.column + j, 1);
 			}
-		for (i = 0; i < 4; i++)
-			for (j = 0; j < 4; j++) {
-				if (drop.mat[i][j] != 0 && drop.row - i  < 24) {
-					drawBlock(drop.id + 1, drop.row - i, drop.column + j, 0);
-				}
+		}
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++) {
+			if (drop.mat[i][j] != 0 && drop.row - i  < 24) {
+				drawBlock(drop.id + 1, drop.row - i, drop.column + j, 0);
 			}
-		if (bottom > 18) drawDanger(0);
-	}
+		}
+	if (bottom > 18) drawDanger(0);
+	if (game.isGaming && !game.isDropping) drawPause();
 }
 
 void drawGameArea() {
@@ -321,20 +320,53 @@ void drawDanger(int flag) {
 	flag ? DrawTextString("À¿") : DrawTextString("Œ£");
 }
 
+void drawPause() {
+	SetPenColor("red");
+	MovePen(9.2, 6.2);
+	DrawTextString("---PAUSED---");
+}
+
+void drawNextDropping() {
+	if (!game.isGaming) return;
+	MovePen(9.6, 5.5);
+	SetPenColor("blue");
+	DrawTextString("NEXT");
+	int i, j;
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++) {
+			if (drop.next == 5) {
+				if (Tetriminos[drop.next][1][i][j] != 0) {
+					drawBlock(drop.next + 1, 8 - i, 18 + j, 0);
+				}
+			} else if (Tetriminos[drop.next][0][i][j] != 0) {
+				drawBlock(drop.next + 1, 9 - i, 19 + j, 0);
+			}
+		}
+}
+
+void drawHoldDropping() {
+	if (!game.isGaming) return;
+	MovePen(9.6, 2.5);
+	SetPenColor("blue");
+	DrawTextString("HOLD");
+	int i, j;
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++) {
+			if (drop.hold == 5) {
+				if (Tetriminos[drop.hold][1][i][j] != 0) {
+					drawBlock(drop.hold + 1, 2 - i, 18 + j, 0);
+				}
+			}
+			else if (Tetriminos[drop.hold][0][i][j] != 0) {
+				drawBlock(drop.hold + 1, 3 - i, 19 + j, 0);
+			}
+		}
+}
+
 int speed = 10, count;
 
 void refreshGame() {
-	if (!game.isGaming) return;
-	if (!game.isDropping) {
-		count = 0;
-		drop.id = (int)(rand() * 10) % 7;
-		memcpy(drop.mat, Tetriminos[drop.id][0], sizeof(drop.mat));
-		drop.direction = 0;
-		drop.column = 6;
-		drop.row = 24;
-		game.isDropping = 1;
-		return;
-	}
+	if (!game.isGaming || !game.isDropping) return;
 	if (count == speed - game.level) {
 		count = 0;
 		dropIt();
@@ -344,6 +376,7 @@ void refreshGame() {
 }
 
 void dropIt() {
+	if (!game.isDropping) return;
 	int i, j;
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++) {
@@ -362,15 +395,31 @@ void fixIt() {
 			if (!drop.mat[i][j]) continue;
 			if (drop.row - i > 23) {
 				gameOver();
+				return;
 			}
 			map[drop.row - i][drop.column + j] = drop.id + 1;
 		}
-	game.isDropping = 0;
 	while (checkForElimination());
 	checkForLevelUp();
+	createDropping();
+	writeGameData();
+}
+
+bool usedHold = 0;
+
+void createDropping() {
+	usedHold = 0;
+	drop.id = drop.next == -1 ? (int)(rand() * 10) % 7 : drop.next;
+	drop.next = (int)(rand() * 10) % 7;
+	memcpy(drop.mat, Tetriminos[drop.id][0], sizeof(drop.mat));
+	drop.direction = 0;
+	drop.column = 6;
+	drop.row = 24;
+	return;
 }
 
 void moveIt(int id) {
+	if (!game.isDropping) return;
 	int direction[5][2] = { {-1},{1} };
 	int i, j;
 	for (i = 0; i < 4; i++)
@@ -462,6 +511,7 @@ void rotateIt() {
 }
 
 void dropToBottom() {
+	if (!game.isDropping) return;
 	int bottom = findBottomPosition();
 	scoreIt(drop.row - bottom, 1);
 	drop.row = bottom;
@@ -489,22 +539,23 @@ int findBottomPosition() {
 
 void newGame() {
 	game.isGaming = 1;
-	game.isDropping = 0;
+	game.isDropping = 1;
 	game.score = 0;
 	game.elimRowCounter = 0;
 	game.level = 1;
+	drop.next = -1;
+	drop.hold = -1;
+	createDropping();
 	memset(map, 0, sizeof(map));
-	startTimer(1, 40);
 	erase();
 }
 
 int switchGame(bool isPause) {
 	if (!game.isGaming) return -1;
 	if (isPause) {
-		cancelTimer(1);
-		writeGameData();
+		game.isDropping = 0;
 	}
-	else startTimer(1, 40);
+	else game.isDropping = 1;
 }
 
 void gameOver() {
@@ -514,10 +565,11 @@ void gameOver() {
 			if (map[i][j]) map[i][j] = 8;
 		}
 	}
-	drop.id = 7;
+ 	drop.id = 7;
+	game.isDropping = 0;
 	showBlock();
-	cancelTimer(1);
 	popNameQuery = 1;
+	erase();
 }
 
 int addScore[5] = { 0,100,200,400,800 };
@@ -540,4 +592,21 @@ char* numToString(int x) {
 	}
 	str[top] = '\0';
 	return str;
+}
+
+void holdDropping() {
+	if (usedHold) return;
+	if (drop.hold == -1) {
+		drop.hold = drop.id;
+		createDropping();
+		return;
+	}
+	int tmp;
+	tmp = drop.hold;
+	drop.hold = drop.id;
+	drop.id = tmp;
+	drop.column = 6;
+	drop.row = 24;
+	memcpy(drop.mat, Tetriminos[drop.id][0], sizeof(drop.mat));
+	usedHold = 1;
 }
