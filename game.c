@@ -23,9 +23,11 @@
 
 int map[26][16];
 
+// Tetriminos[l][k][i][j] stands for
+// the l-th Tetrimino and in the k-th direction
+// the i-th row and j-th column of the matrix
 int Tetriminos[10][4][4][4] = {
-	
-{
+	{
 		{{1,1,0,0},
 		{ 1,0,0,0 },
 		{ 1,0,0,0 },
@@ -182,8 +184,10 @@ int Tetriminos[10][4][4][4] = {
 
 int popNameQuery = 0;
 
+// drop instance for the dropping tetrimino
 Dropping drop;
 
+// game instance for the status of the whole game
 Game game;
 
 void showBlock() {
@@ -195,12 +199,14 @@ void showBlock() {
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++) {
 			if (drop.mat[i][j] != 0 && bottom - i < 24) {
+				// draw hint block
 				drawBlock(8, bottom - i, drop.column + j, 1);
 			}
 		}
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++) {
 			if (drop.mat[i][j] != 0 && drop.row - i  < 24) {
+				// draw the dropping tetrimino
 				drawBlock(drop.id + 1, drop.row - i, drop.column + j, 0);
 			}
 		}
@@ -275,7 +281,7 @@ void drawBlockInnerBorder(int row, int column) {
 
 void drawNameQuery() {
 	SetPenColor("black");
-	drawRectangle(3, 5, 6, 3, 1);
+	drawRectangle(3, 5, 6, 3, 1); // make the background opaque
 	SetPenColor("red");
 	drawRectangle(3, 5, 6, 3, 0);
 	static char name[25] = "";
@@ -311,6 +317,7 @@ void dropIt() {
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++) {
 			if (drop.mat[i][j] != 0 && (map[drop.row - i - 1][drop.column + j] != 0 || drop.row - i == 0)) {
+				// the dropping tetrimino attached to the ground or other fixed tetriminos
 				fixIt();
 				return;
 			}
@@ -329,12 +336,13 @@ void fixIt() {
 			}
 			map[drop.row - i][drop.column + j] = drop.id + 1;
 		}
-	while (checkForElimination());
+	while (checkForElimination()); // there may be several times of elimination
 	checkForLevelUp();
 	createDropping();
 	writeGameData();
 }
 
+// for every dropping tetrimino, there will be only one chance to hold and switch for the user
 bool usedHold = 0;
 
 void createDropping() {
@@ -401,31 +409,10 @@ void checkForLevelUp() {
 	}
 }
 
-// Is this needed?
-/*
- ........
- .*......
- ********
- ......**
- ......**
-*/
-void gravity() {
-	int i, j;
-	for (j = 1; j < 24; j++) {
-		for (i = 0; i < 16; i++) {
-			if (map[i][j] == 0) continue;
-			if (((i == 0) || (i - 1 >= 0 && map[i - 1][j - 1] == 0)) && (map[i][j - 1] == 0) && ((i == 23 || (i + 1 < 24 && map[i + 1][j - 1] == 0)))) {
-				map[i][j - 1] = map[i][j];
-				map[i][j] = 0;
-			}
-		}
-	}
-}
-
 void rotateIt() {
 	if (!game.isDropping) return;
 	int i, j, k, l, py[3] = { 0,1,-1 };
-	if (drop.id == 5) py[1] = 3, py[2] = -3;
+	if (drop.id == 5) py[1] = 3, py[2] = -3; // special case for "****"
 	for (l = 0; l <= 2; l++) {
 		for (k = 0; k < (drop.id == 5 ? 1 : 3); k++) {
 			bool feasible = 1;
@@ -442,6 +429,7 @@ void rotateIt() {
 				return;
 			}
 		}
+		// if it's not feasible for all possible directions, try to move the dropping tetrimino left or right
 	}
 }
 
@@ -454,16 +442,14 @@ void dropToBottom() {
 }
 
 int findBottomPosition() {
+	//find where the dropping tetrimino will be set if it will be pushed to the bottom right away
 	int i, j, k;
 	for (k = drop.row - 1; k >= 0; k--) {
 		bool flag = 0;
 		for (i = 3; i >= 0; i--) {
 			for (j = 0; j < 4; j++) {
 				if (!drop.mat[i][j]) continue;
-				if (k - i < 0) {
-					return k + 1;
-				}
-				if (map[k - i][drop.column + j]) {
+				if (k - i < 0 || map[k - i][drop.column + j]) {
 					return k + 1;
 				}
 			}
@@ -501,7 +487,7 @@ void gameOver() {
 			if (map[i][j]) map[i][j] = 8;
 		}
 	}
- 	drop.id = 7;
+ 	drop.id = 7; // turn all blocks to grey
 	game.isDropping = 0;
 	showBlock();
 	popNameQuery = 1;

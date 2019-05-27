@@ -13,6 +13,8 @@ int popContinueQuery = 0;
 void loadScore() {
 	fw = fopen("score.dat", "r+");
 	if (fw == NULL) {
+		// No data file exists
+		// Create empty data file
 		fw = fopen("score.dat", "w+");
 		fprintf(fw, "* -1 -1");
 	}
@@ -20,12 +22,11 @@ void loadScore() {
 		while (!feof(fw)) {
 			ScoreData *nData = malloc(sizeof(ScoreData));
 			fscanf(fw, "%s %d %d", nData->name, &nData->level, &nData->score);
-			if (nData->level == -1) break;
-			InsertNode(usrData, NULL, nData);
+			if (nData->level == -1) break; // end flag
+			InsertNode(usrData, NULL, nData); // append new data to the end of linkedlist
 		}
 	}
 	fclose(fw);
-	
 }
 
 bool detectSavedGame() {
@@ -34,7 +35,7 @@ bool detectSavedGame() {
 	int tmp;
 	fscanf(fw, "%d", &tmp);
 	fclose(fw);
-	if (tmp == -1) return 0;
+	if (tmp == -1) return 0; // empty saved game data
 	return 1;
 }
 
@@ -57,15 +58,15 @@ void loadGame() {
 	}
 	fclose(fw);
 	game.isGaming = 1;
-	game.isDropping = 0;
+	game.isDropping = 0; // set game to paused
 	pauseButtonStatus = 1;
 	strcpy(game.usrName, "");
 }
 
 void initData() {
 	usrData = NewLinkedList(); 
-	loadScore();
-	if (detectSavedGame()) popContinueQuery = 1;
+	loadScore(); // load ranklist data
+	if (detectSavedGame()) popContinueQuery = 1; // ask the user whether to load saved game
 }
 
 void print(ScoreData* x) {
@@ -95,7 +96,7 @@ void drawRanklist() {
 		MovePen(5.2, 6);
 		DrawTextString("NO RECORD");
 	}
-	while (cur->next != NULL && cnt < 8) {
+	while (cur->next != NULL && cnt < 8) { // no more than top 8
 		ScoreData *nextData = cur->next->dataptr;
 		cnt++;
 		MovePen(3, 9 - cnt * 0.8);
@@ -109,7 +110,7 @@ void drawRanklist() {
 		cur = cur->next;
 	}
 	if (button(GenUIID(0), 5, 1.8, 2, 0.5, "DISMISS")) {
-		popRanklist = 0;
+		popRanklist = 0; // dismiss query
 	}
 }
 
@@ -118,11 +119,13 @@ void saveScoreData() {
 	nData->score = game.score;
 	nData->level = game.level;
 	strcpy(nData->name, game.usrName);
-	if (usrData->next == NULL) {
+	// ***************
+	if (usrData->next == NULL) { // usrData is empty
 		InsertNode(usrData, usrData, nData);
 		writeScoreData();
 		return;
 	}
+	// *************** not needed?
 	linkedlistADT cur = usrData;
 	while (cur->next != NULL) {
 		ScoreData *nextData = cur->next->dataptr;
@@ -175,11 +178,11 @@ void drawContinueQuery() {
 	DrawTextString("Would you like to continue?");
 	if (button(GenUIID(0), 3.8, 5.4, 2, 0.5, "Continue")) {
 		loadGame();
-		erase();
+		erase(); // saved game data will be read only once
 		popContinueQuery = 0;
 	}
 	if (button(GenUIID(0), 6.2, 5.4, 2, 0.5, "Cancel")) {
-		erase();
+		erase(); // saved game data will be read only once
 		popContinueQuery = 0;
 	}
 }

@@ -27,12 +27,12 @@ void drawMenu() {
 	};
 
 	double fH = GetFontHeight();
-	double x = 0; //fH/8;
+	double x = 0;
 	double y = WindowHeight;
-	double h = fH * 1.5; // 控件高度
-	double w = TextStringWidth(menulistGame[0]) * 2; // 控件宽度
+	double h = fH * 1.5;
+	double w = TextStringWidth(menulistGame[0]) * 2;
 	double wlist = TextStringWidth(menulistGame[0])*2.5;
-	double xindent = WindowHeight / 20; // 缩进
+	double xindent = WindowHeight / 20;
 	int	selection;
 
 	menulistGame[2] = pauseButtonStatus ? "Resume | Ctrl-S" : "Pause | Ctrl-S";
