@@ -24,13 +24,13 @@
 
 #include "genlib.h"
 
-/*
- * Type: linkedlistADT
- * --------------
- * This line defines the abstract linked list type as a pointer to
- * its concrete counterpart.  Clients have no access to the
- * underlying representation.
- */
+ /*
+  * Type: linkedlistADT
+  * --------------
+  * This line defines the abstract linked list type as a pointer to
+  * its concrete counterpart.  Clients have no access to the
+  * underlying representation.
+  */
 
 typedef struct linkedlistCDT *linkedlistADT;
 
@@ -61,7 +61,7 @@ void FreeLinkedList(linkedlistADT linkedlist);
  * find out the obj, renturn NULL otherwise.
  */
 
-linkedlistADT SearchNode(linkedlistADT linkedlist, void *obj, bool (*equalfunptr)(void *obj1, void *obj2));
+linkedlistADT SearchNode(linkedlistADT linkedlist, void *obj, bool(*equalfunptr)(void *obj1, void *obj2));
 
 /*
  * Function: InsertNode
@@ -82,7 +82,7 @@ void InsertNode(linkedlistADT linkedlist, linkedlistADT nodeptr, void *obj);
  */
 
 linkedlistADT DeleteNode(linkedlistADT linkedlist, void *obj,
-                         bool (*equalfunptr)(void *obj1, void *obj2));
+	bool(*equalfunptr)(void *obj1, void *obj2));
 
 /*
  * Function: TraverseList
@@ -92,7 +92,7 @@ linkedlistADT DeleteNode(linkedlistADT linkedlist, void *obj,
  * the function which funptr points to.
  */
 
-void TraverseLinkedList(linkedlistADT linkedlist, void (*traversefunptr)(void *obj));
+void TraverseLinkedList(linkedlistADT linkedlist, void(*traversefunptr)(void *obj));
 
 /*
  * Function: ithNode
@@ -128,8 +128,8 @@ void *NodeObj(linkedlistADT head, linkedlistADT nodeptr);
  */
 
 struct linkedlistCDT {
-    void *dataptr;
-    struct linkedlistCDT *next;
+	void *dataptr;
+	struct linkedlistCDT *next;
 };
 
-#endif
+#endif#pragma once

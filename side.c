@@ -3,17 +3,18 @@
 extern Game game;
 extern Dropping drop;
 extern Tetriminos[10][4][4][4];
+extern theme;
 
 void drawScoreboard() {
-	SetPenColor("red");
-	drawBox(9, 10.5, 2, 1, 0, game.isGaming ? numToString(game.score) : "HAPPY", "L", "red");
+	SetPenColor(theme ? "Background1" : "Border1");
+	drawBox(9, 10.5, 2, 1, 0, game.isGaming ? numToString(game.score) : "HAPPY", "L", theme ? "Side1" : "Red1");
 	MovePen(9.55, 11.7);
 	DrawTextString("SCORE");
 }
 
 void drawLevelboard() {
-	SetPenColor("blue");
-	drawBox(9, 8.8, 2, 1, 0, game.isGaming ? numToString(game.level) : "HAPPY", "L", "blue");
+	SetPenColor(theme ? "Background1" : "Border1");
+	drawBox(9, 8.8, 2, 1, 0, game.isGaming ? numToString(game.level) : "HAPPY", "L", theme ? "Side2" : "Side4");
 	MovePen(9.6, 10);
 	DrawTextString("LEVEL");
 }
@@ -21,14 +22,14 @@ void drawLevelboard() {
 extern int goal[10];
 
 void drawGoalboard() {
-	SetPenColor("blue");
-	drawBox(9, 7, 2, 1, 0, game.isGaming ? numToString(goal[game.level] - game.elimRowCounter) : "TETRIS!", "L", "blue");
+	SetPenColor(theme ? "Background1" : "Border1");
+	drawBox(9, 7, 2, 1, 0, game.isGaming ? numToString(goal[game.level] - game.elimRowCounter) : "TETRIS!", "L", theme ? "Side2" : "Side4");
 	MovePen(9.65, 8.2);
 	DrawTextString("GOAL");
 }
 
 void drawPause() {
-	SetPenColor("red");
+	SetPenColor(theme ? "Red1" : "Side3");
 	MovePen(9.2, 6.2);
 	DrawTextString("---PAUSED---");
 }
@@ -36,7 +37,7 @@ void drawPause() {
 void drawNextDropping() {
 	if (!game.isGaming) return;
 	MovePen(9.6, 5.5);
-	SetPenColor("blue");
+	SetPenColor(theme ? "Font1" : "Font2");
 	DrawTextString("NEXT");
 	int i, j;
 	for (i = 0; i < 4; i++)
@@ -55,7 +56,7 @@ void drawNextDropping() {
 void drawHoldDropping() {
 	if (!game.isGaming) return;
 	MovePen(9.6, 2.5);
-	SetPenColor("blue");
+	SetPenColor(theme ? "Font1" : "Font2");
 	DrawTextString("HOLD");
 	int i, j;
 	for (i = 0; i < 4; i++)

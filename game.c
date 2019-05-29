@@ -1,4 +1,4 @@
-#include "game.h"
+﻿#include "game.h"
 #include "imgui.h"
 #include "graphics.h"
 #include "data.h"
@@ -22,6 +22,7 @@
 // different values in map stand for different colors
 
 int map[26][16];
+extern theme;
 
 int Tetriminos[10][4][4][4] = {
 	{
@@ -198,7 +199,7 @@ void showBlock() {
 		}
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++) {
-			if (drop.mat[i][j] != 0 && drop.row - i  < 24) {
+			if (drop.mat[i][j] != 0 && drop.row - i < 24) {
 				drawBlock(drop.id + 1, drop.row - i, drop.column + j, 0);
 			}
 		}
@@ -206,7 +207,7 @@ void showBlock() {
 }
 
 void drawGameArea() {
-	SetPenColor("red");
+	SetPenColor(theme ? "Border1" : "Border2");
 	SetPenSize(3);
 	MovePen(GameAreaWidth, 0);
 	DrawLine(0, GameAreaHeight);
@@ -215,28 +216,28 @@ void drawGameArea() {
 
 extern int theme;
 
-void drawBlock(int color, int row, int column,bool isHint) {
+void drawBlock(int color, int row, int column, bool isHint) {
 	switch (color) {
 	case 1:
-		SetPenColor("red");
+		SetPenColor(theme ? "red1" : "red1");
 		break;
 	case 2:
-		SetPenColor("blue");
+		SetPenColor(theme ? "pink1" : "pink1");
 		break;
 	case 3:
-		SetPenColor("magenta");
+		SetPenColor(theme ? "flesh1" : "flesh1");
 		break;
 	case 4:
-		SetPenColor("orange");
+		SetPenColor(theme ? "green1" : "green1");
 		break;
 	case 5:
-		SetPenColor("violet");
+		SetPenColor(theme ? "blue1" : "blue1");
 		break;
 	case 6:
-		SetPenColor("green");
+		SetPenColor(theme ? "white1" : "white1");
 		break;
 	case 7:
-		SetPenColor(theme ? "white" : "black");
+		SetPenColor(theme ? "wine1" : "wine1");
 		break;
 	case 8:
 		SetPenColor("dark gray");
@@ -272,9 +273,9 @@ void drawBlockInnerBorder(int row, int column) {
 }
 
 void drawNameQuery() {
-	SetPenColor(theme ? "black" : "gray");
+	SetPenColor("Background1");
 	drawRectangle(3, 5, 6, 3, 1);
-	SetPenColor(theme ? "red" : "white");
+	SetPenColor("Border1");
 	drawRectangle(3, 5, 6, 3, 0);
 	static char name[25] = "";
 	textbox(GenUIID(0), 4, 6.2, 4, 0.5, name, sizeof(name));
@@ -295,9 +296,9 @@ extern bool pauseButtonStatus;
 extern int popRUSure;
 
 void drawRUSure() {
-	SetPenColor(theme ? "black" : "gray");
+	SetPenColor("Background1");
 	drawRectangle(3, 5, 6, 3, 1);
-	SetPenColor(theme ? "red" : "white");
+	SetPenColor("Border1");
 	drawRectangle(3, 5, 6, 3, 0);
 	MovePen(5, 7.2);
 	DrawTextString("ARE YOU SURE");
@@ -467,7 +468,7 @@ void rotateIt() {
 			}
 			if (feasible) {
 				drop.column += py[l];
-				memcpy(drop.mat, Tetriminos[drop.id][drop.direction],sizeof(drop.mat));
+				memcpy(drop.mat, Tetriminos[drop.id][drop.direction], sizeof(drop.mat));
 				drop.ready = 0;
 				readyCount = 0;
 				return;
@@ -536,7 +537,7 @@ void gameOver() {
 			if (map[i][j]) map[i][j] = 8;
 		}
 	}
- 	drop.id = 7;
+	drop.id = 7;
 	game.isDropping = 0;
 	showBlock();
 	popNameQuery = 1;
@@ -552,7 +553,7 @@ void scoreIt(int count, int flag) {
 char* numToString(int x) {
 	if (x == 0) return "0";
 	static char str[15];
-	int digit[15] = { 0 }, i, top=0;
+	int digit[15] = { 0 }, i, top = 0;
 	while (x) {
 		digit[top] = x % 10;
 		x /= 10;

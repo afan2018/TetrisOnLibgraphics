@@ -1,4 +1,4 @@
-#include "graphics.h"
+﻿#include "graphics.h"
 #include "extgraph.h"
 #include "genlib.h"
 #include "simpio.h"
@@ -101,7 +101,7 @@ void Main() {
 extern int theme;
 
 void drawGlobalBackground() {
-	SetPenColor(theme ? "black" : "light gray");
+	SetPenColor(theme ? "white" : "black");
 	drawRectangle(0, 0, WindowWidth, WindowHeight, 1);
 }
 

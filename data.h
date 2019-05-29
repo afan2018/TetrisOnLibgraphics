@@ -31,7 +31,7 @@ void writeGameData();
 
 void drawLoadGameQuery();
 
-void encode(char* str,char *fileName);
-bool verify(char* str,char *fileName);
+void encode(char* str, char *fileName);
+bool verify(char* str, char *fileName);
 
 char* textFileRead(char* filename);

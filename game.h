@@ -61,7 +61,7 @@ void moveIt(int direction);
 void rotateIt();
 void dropToBottom();
 int findBottomPosition();
-void scoreIt(int count,int flag);
+void scoreIt(int count, int flag);
 void createDropping();
 void holdDropping();
 

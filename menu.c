@@ -1,4 +1,4 @@
-#include "menu.h"
+ï»¿#include "menu.h"
 #include "game.h"
 
 #define WindowWidth 12
@@ -32,15 +32,22 @@ void drawMenu() {
 	double fH = GetFontHeight();
 	double x = 0; //fH/8;
 	double y = WindowHeight;
-	double h = fH * 1.5; // ¿Ø¼þ¸ß¶È
-	double w = TextStringWidth(menulistGame[0]) * 2; // ¿Ø¼þ¿í¶È
+	double h = fH * 1.5; // Â¿Ã˜Â¼Ã¾Â¸ÃŸÂ¶Ãˆ
+	double w = TextStringWidth(menulistGame[0]) * 2; // Â¿Ã˜Â¼Ã¾Â¿Ã­Â¶Ãˆ
 	double wlist = TextStringWidth(menulistGame[0])*2.5;
-	double xindent = WindowHeight / 20; // Ëõ½ø
+	double xindent = WindowHeight / 20; // Ã‹ÃµÂ½Ã¸
 	int	selection;
 
 	menulistGame[2] = pauseButtonStatus ? "Resume | Ctrl-S" : "Pause | Ctrl-S";
+
+	char * c[] = { "Menu1","Menu1","Menu2","Menu2","Menu3","Menu3","Menu4","Menu4" };
+
+	setTextBoxColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
+	setButtonColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
+	setMenuColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
+
 	selection = menuList(GenUIID(0), x, y - h, w, wlist + 0.7, h, menulistGame, sizeof(menulistGame) / sizeof(menulistGame[0]));
-	char * c[] = { "blue","blue","red","red","orange","orange","yellow","yellow" };
+
 	switch (selection) {
 	case 1:
 		if (switchGame(1) != -1) {
@@ -59,6 +66,7 @@ void drawMenu() {
 		popRanklist = 1;
 		break;
 	case 5:
+		if (theme) theme = 1;
 		setTextBoxColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
 		setButtonColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
 		setMenuColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);

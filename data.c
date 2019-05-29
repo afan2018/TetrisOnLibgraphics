@@ -8,6 +8,8 @@ extern Game game;
 extern Dropping drop;
 extern int map[24][16];
 
+char * c[] = { "Menu2","Menu2","Menu1","Menu1","Menu3","Menu3","Menu4","Menu4" };
+
 int popContinueQuery = 0;
 
 void loadScore() {
@@ -89,9 +91,9 @@ extern int theme;
 
 void drawRanklist() {
 	if (switchGame(1) != -1) pauseButtonStatus = 1;
-	SetPenColor(theme ? "black" : "gray");
+	SetPenColor("Background1");
 	drawRectangle(2.5, 1.5, 7, 9, 1);
-	SetPenColor(theme ? "red" : "white");
+	SetPenColor("Border1");
 	drawRectangle(2.5, 1.5, 7, 9, 0);
 	MovePen(5.4, 9.8);
 	DrawTextString("RANKLIST");
@@ -101,7 +103,7 @@ void drawRanklist() {
 	DrawTextString("LEVEL");
 	MovePen(7.6, 9);
 	DrawTextString("SCORE");
-	SetPenColor(theme ? "white" : "black");
+	SetPenColor("Font1");
 	linkedlistADT cur = usrData;
 	int cnt = 0;
 	
@@ -122,6 +124,9 @@ void drawRanklist() {
 		DrawTextString(numToString(nextData->score));
 		cur = cur->next;
 	}
+	setTextBoxColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
+	setButtonColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
+	setMenuColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
 	if (button(GenUIID(0), 5, 1.8, 2, 0.5, "DISMISS")) {
 		popRanklist = 0;
 	}
@@ -185,14 +190,17 @@ void writeGameData() {
 }
 
 void drawLoadGameQuery() {
-	SetPenColor(theme ? "black" : "gray");
+	SetPenColor("Background1");
 	drawRectangle(3, 5, 6, 3, 1);
-	SetPenColor(theme ? "red" : "white");
+	SetPenColor("Border1");
 	drawRectangle(3, 5, 6, 3, 0);
 	MovePen(4.3, 7.2);
 	DrawTextString("SAVED GAME DETECTED");
 	MovePen(4.2, 6.5);
 	DrawTextString("Would you like to continue?");
+	setTextBoxColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
+	setButtonColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
+	setMenuColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
 	if (button(GenUIID(0), 3.8, 5.4, 2, 0.5, "Continue")) {
 		loadGame();
 		erase("game.dat");
