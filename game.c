@@ -316,6 +316,7 @@ void dropIt() {
 			}
 		}
 	drop.row--;
+	writeGameData();
 }
 
 void fixIt() {
@@ -332,15 +333,34 @@ void fixIt() {
 	while (checkForElimination());
 	checkForLevelUp();
 	createDropping();
-	writeGameData();
 }
 
 bool usedHold = 0;
 
+double calcStdDeviation(int *a, int n) {
+	int i;
+	double ave = 0, ans = 0;
+	for (i = 0; i < n; i++) ave += a[i];
+	ave /= n;
+	for (i = 0; i < n; i++) ans += (a[i] - ave)*(a[i] - ave);
+	ans /= n;
+	return ans;
+}
+
+int randDroppingID() {
+	static int count[8];
+	while (1) {
+		int id = (int)(rand() * 10) % 7;
+		count[id]++;
+		if (calcStdDeviation(count, 7) - 2 < 0.0001) return id;
+		count[id]--;
+	}
+}
+
 void createDropping() {
 	usedHold = 0;
-	drop.id = drop.next == -1 ? (int)(rand() * 10) % 7 : drop.next;
-	drop.next = (int)(rand() * 10) % 7;
+	drop.id = drop.next == -1 ? randDroppingID() : drop.next;
+	drop.next = randDroppingID();
 	memcpy(drop.mat, Tetriminos[drop.id][0], sizeof(drop.mat));
 	drop.direction = 0;
 	drop.column = 6;
@@ -372,7 +392,6 @@ bool checkForElimination() {
 		if (elimAble) {
 			elimRowCounter++;
 			eliminate(i);
-			//gravity();
 		}
 	}
 	scoreIt(elimRowCounter, 0);
@@ -451,6 +470,8 @@ int findBottomPosition() {
 	return 0;
 }
 
+extern int popContinueQuery;
+
 void newGame() {
 	game.isGaming = 1;
 	game.isDropping = 1;
@@ -462,6 +483,7 @@ void newGame() {
 	createDropping();
 	memset(map, 0, sizeof(map));
 	erase();
+	popContinueQuery = 0;
 }
 
 int switchGame(bool isPause) {

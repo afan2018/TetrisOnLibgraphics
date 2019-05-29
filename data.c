@@ -87,6 +87,7 @@ void print(ScoreData* x) {
 extern int popRanklist;
 
 void drawRanklist() {
+	if (switchGame(1) != -1) pauseButtonStatus = 1;
 	SetPenColor("black");
 	drawRectangle(2.5, 1.5, 7, 9, 1);
 	SetPenColor("red");
