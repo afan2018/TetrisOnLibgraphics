@@ -24,14 +24,13 @@
 int map[26][16];
 
 int Tetriminos[10][4][4][4] = {
-	
-{
-		{{1,1,0,0},
+	{
+		{{1,1,0,0 },
 		{ 1,0,0,0 },
 		{ 1,0,0,0 },
 		{ 0,0,0,0 }},
 
-		{{0,0,0,0},
+		{{0,0,0,0 },
 		{ 1,0,0,0 },
 		{ 1,1,1,0 },
 		{ 0,0,0,0 }},
@@ -41,142 +40,141 @@ int Tetriminos[10][4][4][4] = {
 		{ 0,1,1,0 },
 		{ 0,0,0,0 }},
 
-		{{1,1,1,0},
+		{{1,1,1,0 },
 		{ 0,0,1,0 },
 		{ 0,0,0,0 },
 		{ 0,0,0,0 }}
 	},
 
 	{
-		{{2,2,0,0},
+		{{2,2,0,0 },
 		{ 0,2,0,0 },
 		{ 0,2,0,0 },
 		{ 0,0,0,0 }},
 
-		{ {0,0,0,0},
+		{{0,0,0,0 },
 		{ 2,2,2,0 },
 		{ 2,0,0,0 },
 		{ 0,0,0,0 }},
 
-		{ {0,2,0,0 },
+		{{0,2,0,0 },
 		{ 0,2,0,0 },
 		{ 0,2,2,0 },
 		{ 0,0,0,0 }},
 
-		{ {0,0,2,0},
+		{{0,0,2,0 },
 		{ 2,2,2,0 },
-		{ 0,0,0,0 },
-		{ 0,0,0,0 } }
-	},
-
-	{
-		{ {3, 0, 0, 0},
-		{ 3,3,0,0 },
-		{ 0,3,0,0 },
-		{ 0,0,0,0 }},
-
-		{ {0,0,0,0},
-		{ 0,3,3,0 },
-		{ 3,3,0,0 },
-		{ 0,0,0,0 } },
-
-		{ {0,3,0,0 },
-		{ 0,3,3,0 },
-		{ 0,0,3,0 },
-		{ 0,0,0,0 } },
-
-		{ {0,3,3,0},
-		{ 3,3,0,0 },
-		{ 0,0,0,0 },
-		{ 0,0,0,0 } }
-	},
-
-	{
-		{ {0, 4, 0, 0},
-		{ 4,4,0,0 },
-		{ 4,0,0,0 },
-		{ 0,0,0,0 }},
-
-		{ {0,0,0,0},
-		{ 4,4,0,0 },
-		{ 0,4,4,0 },
-		{ 0,0,0,0 } },
-
-		{ {0,0,4,0 },
-		{ 0,4,4,0 },
-		{ 0,4,0,0 },
-		{ 0,0,0,0 } },
-
-		{ {4,4,0,0},
-		{ 0,4,4,0 },
-		{ 0,0,0,0 },
-		{ 0,0,0,0 } }
-	},
-
-	{
-		{ {5, 5, 0, 0},
-		{ 5,5,0,0 },
-		{ 0,0,0,0 },
-		{ 0,0,0,0 }},
-
-		{ {5, 5, 0, 0},
-		{ 5,5,0,0 },
-		{ 0,0,0,0 },
-		{ 0,0,0,0 }},
-
-		{ {5, 5, 0, 0},
-		{ 5,5,0,0 },
-		{ 0,0,0,0 },
-		{ 0,0,0,0 }},
-
-		{ {5, 5, 0, 0},
-		{ 5,5,0,0 },
 		{ 0,0,0,0 },
 		{ 0,0,0,0 }}
 	},
 
 	{
-		{ {6, 0, 0, 0},
-		{ 6,0,0,0 },
-		{ 6,0,0,0 },
-		{ 6,0,0,0 }},
+		{{3,0,0,0 },
+		{ 3,3,0,0 },
+		{ 0,3,0,0 },
+		{ 0,0,0,0 }},
 
-		{ {6, 6, 6, 6},
+		{{0,0,0,0 },
+		{ 0,3,3,0 },
+		{ 3,3,0,0 },
+		{ 0,0,0,0 }},
+
+		{{0,3,0,0 },
+		{ 0,3,3,0 },
+		{ 0,0,3,0 },
+		{ 0,0,0,0 }},
+
+		{{0,3,3,0 },
+		{ 3,3,0,0 },
 		{ 0,0,0,0 },
+		{ 0,0,0,0 }}
+	},
+
+	{
+		{{0,4,0,0 },
+		{ 4,4,0,0 },
+		{ 4,0,0,0 },
+		{ 0,0,0,0 }},
+
+		{{0,0,0,0 },
+		{ 4,4,0,0 },
+		{ 0,4,4,0 },
+		{ 0,0,0,0 }},
+
+		{{0,0,4,0 },
+		{ 0,4,4,0 },
+		{ 0,4,0,0 },
+		{ 0,0,0,0 }},
+
+		{{4,4,0,0 },
+		{ 0,4,4,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 } }
+	},
+
+	{
+		{{5,5,0,0 },
+		{ 5,5,0,0 },
 		{ 0,0,0,0 },
 		{ 0,0,0,0 }},
 
-		{ {6, 0, 0, 0},
+		{{5,5,0,0 },
+		{ 5,5,0,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 }},
+
+		{{5,5,0,0 },
+		{ 5,5,0,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 }},
+
+		{{5,5,0,0 },
+		{ 5,5,0,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 }},
+	},
+
+	{
+		{{6,0,0,0 },
 		{ 6,0,0,0 },
 		{ 6,0,0,0 },
 		{ 6,0,0,0 }},
 
-		{ {6, 6, 6, 6},
+		{{6,6,6,6 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 },
+		{ 0,0,0,0 }},
+		{{6,0,0,0 },
+		{ 6,0,0,0 },
+		{ 6,0,0,0 },
+		{ 6,0,0,0 }},
+
+		{{6,6,6,6 },
 		{ 0,0,0,0 },
 		{ 0,0,0,0 },
 		{ 0,0,0,0 }},
 	},
 
 	{
-		{ {0, 7, 0, 0},
+		{{0,7,0,0 },
 		{ 7,7,7,0 },
 		{ 0,0,0,0 },
 		{ 0,0,0,0 }},
 
-		{ {0,7,0,0},
+		{{0,7,0,0 },
 		{ 7,7,0,0 },
 		{ 0,7,0,0 },
-		{ 0,0,0,0 } },
+		{ 0,0,0,0 }},
 
-		{ {0,0,0,0 },
+		{{0,0,0,0 },
 		{ 7,7,7,0 },
 		{ 0,7,0,0 },
-		{ 0,0,0,0 } },
+		{ 0,0,0,0 }},
 
-		{ {0,7,0,0},
+		{{0,7,0,0 },
 		{ 0,7,7,0 },
 		{ 0,7,0,0 },
-		{ 0,0,0,0 } }
+		{ 0,0,0,0 }}
 	}
 };
 
@@ -274,9 +272,9 @@ void drawBlockInnerBorder(int row, int column) {
 }
 
 void drawNameQuery() {
-	SetPenColor("black");
+	SetPenColor(theme ? "black" : "gray");
 	drawRectangle(3, 5, 6, 3, 1);
-	SetPenColor("red");
+	SetPenColor(theme ? "red" : "white");
 	drawRectangle(3, 5, 6, 3, 0);
 	static char name[25] = "";
 	textbox(GenUIID(0), 4, 6.2, 4, 0.5, name, sizeof(name));
@@ -293,7 +291,30 @@ void drawNameQuery() {
 	}
 }
 
-int speed = 10, count;
+extern bool pauseButtonStatus;
+extern int popRUSure;
+
+void drawRUSure() {
+	SetPenColor(theme ? "black" : "gray");
+	drawRectangle(3, 5, 6, 3, 1);
+	SetPenColor(theme ? "red" : "white");
+	drawRectangle(3, 5, 6, 3, 0);
+	MovePen(5, 7.2);
+	DrawTextString("ARE YOU SURE");
+	MovePen(4.2, 6.5);
+	DrawTextString("Your game will not be recorded.");
+	if (button(GenUIID(0), 3.8, 5.4, 2, 0.5, "Continue")) {
+		newGame();
+		pauseButtonStatus = 1;
+		popRUSure = 0;
+	}
+	if (button(GenUIID(0), 6.2, 5.4, 2, 0.5, "Cancel")) {
+		pauseButtonStatus = 1;
+		popRUSure = 0;
+	}
+}
+
+int speed = 10, count = 0, readyCount = 0;
 
 void refreshGame() {
 	if (!game.isGaming || !game.isDropping) return;
@@ -302,7 +323,13 @@ void refreshGame() {
 		dropIt();
 		return;
 	}
+	if (readyCount == 5) {
+		readyCount = 0;
+		drop.ready = 1;
+		return;
+	}
 	count++;
+	readyCount++;
 }
 
 void dropIt() {
@@ -321,6 +348,7 @@ void dropIt() {
 
 void fixIt() {
 	int i, j;
+	if (!drop.ready) return;
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++) {
 			if (!drop.mat[i][j]) continue;
@@ -365,6 +393,7 @@ void createDropping() {
 	drop.direction = 0;
 	drop.column = 6;
 	drop.row = 24;
+	drop.ready = 0;
 	return;
 }
 
@@ -376,6 +405,8 @@ void moveIt(int id) {
 		for (j = 0; j < 4; j++)
 			if (drop.mat[i][j] != 0 && (map[drop.row - i][drop.column + j + direction[id][0]] || drop.column + j + direction[id][0] < 0 || drop.column + j + direction[id][0] > 15))
 				return;
+	drop.ready = 0;
+	readyCount = 0;
 	drop.column += direction[id][0];
 }
 
@@ -437,6 +468,8 @@ void rotateIt() {
 			if (feasible) {
 				drop.column += py[l];
 				memcpy(drop.mat, Tetriminos[drop.id][drop.direction],sizeof(drop.mat));
+				drop.ready = 0;
+				readyCount = 0;
 				return;
 			}
 		}
@@ -448,6 +481,7 @@ void dropToBottom() {
 	int bottom = findBottomPosition();
 	scoreIt(drop.row - bottom, 1);
 	drop.row = bottom;
+	drop.ready = 1;
 	fixIt();
 }
 
@@ -482,7 +516,7 @@ void newGame() {
 	drop.hold = -1;
 	createDropping();
 	memset(map, 0, sizeof(map));
-	erase();
+	erase("game.dat");
 	popContinueQuery = 0;
 }
 
@@ -506,7 +540,7 @@ void gameOver() {
 	game.isDropping = 0;
 	showBlock();
 	popNameQuery = 1;
-	erase();
+	erase("game.dat");
 }
 
 int addScore[5] = { 0,100,200,400,800 };

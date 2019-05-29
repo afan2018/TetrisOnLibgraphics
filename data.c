@@ -85,12 +85,13 @@ void print(ScoreData* x) {
 }
 
 extern int popRanklist;
+extern int theme;
 
 void drawRanklist() {
 	if (switchGame(1) != -1) pauseButtonStatus = 1;
-	SetPenColor("black");
+	SetPenColor(theme ? "black" : "gray");
 	drawRectangle(2.5, 1.5, 7, 9, 1);
-	SetPenColor("red");
+	SetPenColor(theme ? "red" : "white");
 	drawRectangle(2.5, 1.5, 7, 9, 0);
 	MovePen(5.4, 9.8);
 	DrawTextString("RANKLIST");
@@ -100,7 +101,7 @@ void drawRanklist() {
 	DrawTextString("LEVEL");
 	MovePen(7.6, 9);
 	DrawTextString("SCORE");
-	SetPenColor("white");
+	SetPenColor(theme ? "white" : "black");
 	linkedlistADT cur = usrData;
 	int cnt = 0;
 	
@@ -108,7 +109,7 @@ void drawRanklist() {
 		MovePen(5.2, 6);
 		DrawTextString("NO RECORD");
 	}
-	while (cur->next != NULL && cnt < 8) {
+	while (cur->next != NULL && cnt < 7) {
 		ScoreData *nextData = cur->next->dataptr;
 		cnt++;
 		MovePen(3, 9 - cnt * 0.8);
@@ -123,6 +124,11 @@ void drawRanklist() {
 	}
 	if (button(GenUIID(0), 5, 1.8, 2, 0.5, "DISMISS")) {
 		popRanklist = 0;
+	}
+	if (button(GenUIID(0), 3.2, 9.65, 1.5, 0.5, "CLEAR")) {
+		FreeLinkedList(usrData);
+		usrData = NewLinkedList();
+		erase("score.dat");
 	}
 }
 
@@ -153,7 +159,7 @@ void saveScoreData() {
 void writeScoreData() {
 	fw = fopen("score.dat", "w+");
 	TraverseLinkedList(usrData, print);
-	fprintf(fw, "* -1 -1");
+	fprintf(fw, "-1 -1 -1");
 	fclose(fw);
 }
 
@@ -178,10 +184,10 @@ void writeGameData() {
 	encode(textFileRead("game.dat"), "game.ver");
 }
 
-void drawContinueQuery() {
-	SetPenColor("black");
+void drawLoadGameQuery() {
+	SetPenColor(theme ? "black" : "gray");
 	drawRectangle(3, 5, 6, 3, 1);
-	SetPenColor("red");
+	SetPenColor(theme ? "red" : "white");
 	drawRectangle(3, 5, 6, 3, 0);
 	MovePen(4.3, 7.2);
 	DrawTextString("SAVED GAME DETECTED");
@@ -189,17 +195,17 @@ void drawContinueQuery() {
 	DrawTextString("Would you like to continue?");
 	if (button(GenUIID(0), 3.8, 5.4, 2, 0.5, "Continue")) {
 		loadGame();
-		erase();
+		erase("game.dat");
 		popContinueQuery = 0;
 	}
 	if (button(GenUIID(0), 6.2, 5.4, 2, 0.5, "Cancel")) {
-		erase();
+		erase("game.dat");
 		popContinueQuery = 0;
 	}
 }
 
-void erase() {
-	fw = fopen("game.dat", "w+");
+void erase(char* fileName) {
+	fw = fopen(fileName, "w+");
 	fprintf(fw, "-1 -1 -1");
 	fclose(fw);
 }

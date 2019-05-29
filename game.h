@@ -33,7 +33,12 @@ typedef struct {
 typedef struct {
 	// id stands for the kind of tetrimino of which the dropping one is
 	// x, y stand for the top-left of the dropping tetrimino matrix
-	int id, next, hold, column, row, direction;
+	int id;
+	int next;
+	int hold;
+	int column, row;
+	int direction;
+	bool ready;
 	int mat[4][4];
 } Dropping;
 
@@ -48,6 +53,7 @@ void drawHintBlock(int row, int column);
 void drawBlockOuterBorder(int row, int column);
 void drawBlockInnerBorder(int row, int column);
 void drawNameQuery();
+void drawRUSure();
 
 void dropIt();
 void fixIt();

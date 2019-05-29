@@ -108,6 +108,7 @@ void drawGlobalBackground() {
 extern int popNameQuery;
 extern int popRanklist;
 extern int popContinueQuery;
+extern int popRUSure;
 
 
 void display() {
@@ -123,5 +124,6 @@ void display() {
 	drawHoldDropping();
 	if (popRanklist) drawRanklist();
 	if (popNameQuery) drawNameQuery();
-	if (popContinueQuery) drawContinueQuery();
+	if (popContinueQuery) drawLoadGameQuery();
+	if (popRUSure) drawRUSure();
 }

@@ -21,7 +21,7 @@ void initData();
 void loadScore();
 void loadGame();
 void print(ScoreData *x);
-void erase();
+void erase(char* fileName);
 
 void drawRanklist();
 
@@ -29,7 +29,7 @@ void saveScoreData();
 void writeScoreData();
 void writeGameData();
 
-void drawContinueQuery();
+void drawLoadGameQuery();
 
 void encode(char* str,char *fileName);
 bool verify(char* str,char *fileName);

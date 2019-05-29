@@ -7,7 +7,10 @@
 bool pauseButtonStatus = 0;
 
 int popRanklist = 0;
+int popRUSure = 0;
 int theme = 1;
+
+extern Game game;
 
 void drawMenu() {
 	static char * menulistGame[] = {
@@ -37,10 +40,16 @@ void drawMenu() {
 
 	menulistGame[2] = pauseButtonStatus ? "Resume | Ctrl-S" : "Pause | Ctrl-S";
 	selection = menuList(GenUIID(0), x, y - h, w, wlist + 0.7, h, menulistGame, sizeof(menulistGame) / sizeof(menulistGame[0]));
+	char * c[] = { "blue","blue","red","red","orange","orange","yellow","yellow" };
 	switch (selection) {
 	case 1:
-		newGame();
-		pauseButtonStatus = 0;
+		if (switchGame(1) != -1) {
+			popRUSure = 1;
+		}
+		else {
+			newGame();
+			pauseButtonStatus = 0;
+		}
 		break;
 	case 2:
 		if (switchGame(!pauseButtonStatus) != -1)
@@ -50,6 +59,9 @@ void drawMenu() {
 		popRanklist = 1;
 		break;
 	case 5:
+		setTextBoxColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
+		setButtonColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
+		setMenuColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
 		theme = !theme;
 		break;
 	case 6:
