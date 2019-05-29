@@ -13,8 +13,6 @@ int popContinueQuery = 0;
 void loadScore() {
 	fw = fopen("score.dat", "r+");
 	if (fw == NULL) {
-		// No data file exists
-		// Create empty data file
 		fw = fopen("score.dat", "w+");
 		fprintf(fw, "* -1 -1");
 	}
@@ -22,11 +20,24 @@ void loadScore() {
 		while (!feof(fw)) {
 			ScoreData *nData = malloc(sizeof(ScoreData));
 			fscanf(fw, "%s %d %d", nData->name, &nData->level, &nData->score);
-			if (nData->level == -1) break; // end flag
-			InsertNode(usrData, NULL, nData); // append new data to the end of linkedlist
+			if (nData->level == -1) break;
+			InsertNode(usrData, NULL, nData);
 		}
 	}
 	fclose(fw);
+}
+
+char* textFileRead(char* filename) {
+	char* t;
+	FILE *pf = fopen(filename, "rb");
+	fseek(pf, 0, SEEK_END);
+	long lSize = ftell(pf);
+	t = (char*)malloc(sizeof(char)*(lSize)+20);
+	rewind(pf);
+	fread(t, sizeof(char), lSize, pf);
+	t[lSize] = '\0';
+	fclose(pf);
+	return t;
 }
 
 bool detectSavedGame() {
@@ -35,8 +46,8 @@ bool detectSavedGame() {
 	int tmp;
 	fscanf(fw, "%d", &tmp);
 	fclose(fw);
-	if (tmp == -1) return 0; // empty saved game data
-	return 1;
+	if (tmp == -1) return 0;
+	return verify(textFileRead("game.dat"), "game.ver");
 }
 
 extern bool pauseButtonStatus;
@@ -58,15 +69,15 @@ void loadGame() {
 	}
 	fclose(fw);
 	game.isGaming = 1;
-	game.isDropping = 0; // set game to paused
+	game.isDropping = 0;
 	pauseButtonStatus = 1;
 	strcpy(game.usrName, "");
 }
 
 void initData() {
 	usrData = NewLinkedList(); 
-	loadScore(); // load ranklist data
-	if (detectSavedGame()) popContinueQuery = 1; // ask the user whether to load saved game
+	loadScore();
+	if (detectSavedGame()) popContinueQuery = 1;
 }
 
 void print(ScoreData* x) {
@@ -96,7 +107,7 @@ void drawRanklist() {
 		MovePen(5.2, 6);
 		DrawTextString("NO RECORD");
 	}
-	while (cur->next != NULL && cnt < 8) { // no more than top 8
+	while (cur->next != NULL && cnt < 8) {
 		ScoreData *nextData = cur->next->dataptr;
 		cnt++;
 		MovePen(3, 9 - cnt * 0.8);
@@ -110,7 +121,7 @@ void drawRanklist() {
 		cur = cur->next;
 	}
 	if (button(GenUIID(0), 5, 1.8, 2, 0.5, "DISMISS")) {
-		popRanklist = 0; // dismiss query
+		popRanklist = 0;
 	}
 }
 
@@ -119,13 +130,11 @@ void saveScoreData() {
 	nData->score = game.score;
 	nData->level = game.level;
 	strcpy(nData->name, game.usrName);
-	// ***************
-	if (usrData->next == NULL) { // usrData is empty
+	if (usrData->next == NULL) {
 		InsertNode(usrData, usrData, nData);
 		writeScoreData();
 		return;
 	}
-	// *************** not needed?
 	linkedlistADT cur = usrData;
 	while (cur->next != NULL) {
 		ScoreData *nextData = cur->next->dataptr;
@@ -165,6 +174,7 @@ void writeGameData() {
 		fprintf(fw, "\n");
 	}
 	fclose(fw);
+	encode(textFileRead("game.dat"), "game.ver");
 }
 
 void drawContinueQuery() {
@@ -178,11 +188,11 @@ void drawContinueQuery() {
 	DrawTextString("Would you like to continue?");
 	if (button(GenUIID(0), 3.8, 5.4, 2, 0.5, "Continue")) {
 		loadGame();
-		erase(); // saved game data will be read only once
+		erase();
 		popContinueQuery = 0;
 	}
 	if (button(GenUIID(0), 6.2, 5.4, 2, 0.5, "Cancel")) {
-		erase(); // saved game data will be read only once
+		erase();
 		popContinueQuery = 0;
 	}
 }
@@ -191,4 +201,42 @@ void erase() {
 	fw = fopen("game.dat", "w+");
 	fprintf(fw, "-1 -1 -1");
 	fclose(fw);
+}
+
+void encode(char* str, char *fileName) {
+	int i;
+	strcat(str, "{1829046437}");
+	unsigned char decrypt[16];
+	MD5_CTX md5;
+	MD5Init(&md5);
+	MD5Update(&md5, str, strlen((char *)str));
+	MD5Final(&md5, decrypt);
+	fw = fopen(fileName, "w+");
+	for (i = 0; i < 16; i++) {
+		fprintf(fw, "%02x ", decrypt[i]);
+	}
+ 	fclose(fw);
+}
+
+bool verify(char* str, char *fileName) {
+	int i;
+	fw = fopen(fileName, "r+");
+	if (fw == NULL) return 0;
+	strcat(str, "{1829046437}");
+	unsigned char *encrypt = str;
+	unsigned char decrypt[16];
+	MD5_CTX md5;
+	MD5Init(&md5);
+	MD5Update(&md5, encrypt, strlen((char *)encrypt));
+	MD5Final(&md5, decrypt);
+	int x;
+	for (i = 0; i < 16; i++) {
+		fscanf(fw, "%02x", &x);
+		if (decrypt[i] != x) {
+			fclose(fw);
+			return 0;
+		}
+	}
+	fclose(fw);
+	return 1;
 }

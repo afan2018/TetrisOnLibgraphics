@@ -85,7 +85,7 @@ void Main() {
 	SetWindowSize(WindowWidth, WindowHeight);
 
 	InitGraphics();
-//	InitConsole();
+	InitConsole();
 	srand(time(NULL));
 
 	registerCharEvent(CharEventProcess);
@@ -96,6 +96,19 @@ void Main() {
 	startTimer(1, 40);
 
 	initData();
+	/*
+	int i;
+	unsigned char encrypt[] = "admin";//21232f297a57a5a743894a0e4a801fc3
+	unsigned char decrypt[16];
+	MD5_CTX md5;
+	MD5Init(&md5);
+	MD5Update(&md5, encrypt, strlen((char *)encrypt));
+	MD5Final(&md5, decrypt);
+	printf("加密前:%s\n加密后:", encrypt);
+	for (i = 0; i < 16; i++)
+	{
+		printf("%02x", decrypt[i]);
+	}*/
 }
 
 extern int theme;

@@ -4,6 +4,7 @@
 #include "linkedlist.h"
 #include "game.h"
 #include "imgui.h"
+#include "md5.h"
 
 #ifndef _defSD
 #define _defSD
@@ -29,3 +30,8 @@ void writeScoreData();
 void writeGameData();
 
 void drawContinueQuery();
+
+void encode(char* str,char *fileName);
+bool verify(char* str,char *fileName);
+
+char* textFileRead(char* filename);
