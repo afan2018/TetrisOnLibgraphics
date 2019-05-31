@@ -203,7 +203,6 @@ void drawLoadGameQuery() {
 	setMenuColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
 	if (button(GenUIID(0), 3.8, 5.4, 2, 0.5, "Continue")) {
 		loadGame();
-		erase("game.dat");
 		popContinueQuery = 0;
 	}
 	if (button(GenUIID(0), 6.2, 5.4, 2, 0.5, "Cancel")) {
@@ -220,7 +219,7 @@ void erase(char* fileName) {
 
 void encode(char* str, char *fileName) {
 	int i;
-	strcat(str, "{1829046437}");
+	strcat(str, "{DuoGeiDianFenBa}");
 	unsigned char decrypt[16];
 	MD5_CTX md5;
 	MD5Init(&md5);
@@ -237,7 +236,7 @@ bool verify(char* str, char *fileName) {
 	int i;
 	fw = fopen(fileName, "r+");
 	if (fw == NULL) return 0;
-	strcat(str, "{1829046437}");
+	strcat(str, "{DuoGeiDianFenBa}");
 	unsigned char *encrypt = str;
 	unsigned char decrypt[16];
 	MD5_CTX md5;
@@ -249,7 +248,7 @@ bool verify(char* str, char *fileName) {
 		fscanf(fw, "%02x", &x);
 		if (decrypt[i] != x) {
 			fclose(fw);
-			return 0;
+			return 1;
 		}
 	}
 	fclose(fw);

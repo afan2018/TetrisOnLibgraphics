@@ -1,8 +1,4 @@
 ﻿#include "game.h"
-#include "imgui.h"
-#include "graphics.h"
-#include "data.h"
-#include "side.h"
 
 #define GameStartX 0
 #define GameEndX 8
@@ -373,7 +369,7 @@ double calcStdDeviation(int *a, int n) {
 	ave /= n;
 	for (i = 0; i < n; i++) ans += (a[i] - ave)*(a[i] - ave);
 	ans /= n;
-	return ans;
+	return sqrt(ans);
 }
 
 int randDroppingID() {
@@ -443,9 +439,10 @@ void eliminate(int index) {
 	}
 }
 
-int goal[10] = { 0,5,10,15,20,20,20,20,20,20 };
+int goal[10] = { 0,5,10,15,20,20,20,20,20,-1 };
 
 void checkForLevelUp() {
+	if (game.level == 9) return;
 	if (game.elimRowCounter >= goal[game.level]) {
 		game.elimRowCounter -= goal[game.level];
 		game.level++;
@@ -454,15 +451,16 @@ void checkForLevelUp() {
 
 void rotateIt() {
 	if (!game.isDropping) return;
-	int i, j, k, l, py[3] = { 0,1,-1 };
+	int i, j, k, l, py[3] = { 0,1,-1 }, origin = drop.direction;
 	if (drop.id == 5) py[1] = 3, py[2] = -3;
 	for (l = 0; l <= 2; l++) {
+		drop.direction = origin;
 		for (k = 0; k < (drop.id == 5 ? 1 : 3); k++) {
 			bool feasible = 1;
 			drop.direction = (drop.direction + 1) % 4;
 			for (i = 0; i < 4; i++) {
 				for (j = 0; j < 4; j++) {
-					if (Tetriminos[drop.id][drop.direction][i][j] != 0 && (map[drop.row - i][drop.column + py[l] + j] || drop.row - i < 0 || drop.column + py[l] + j > 15))
+					if (Tetriminos[drop.id][drop.direction][i][j] != 0 && (map[drop.row - i][drop.column + py[l] + j] || drop.row - i < 0 || drop.column + py[l] + j > 15|| drop.column + py[l] + j < 0))
 						feasible = 0;
 				}
 			}

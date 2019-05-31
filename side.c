@@ -23,7 +23,7 @@ extern int goal[10];
 
 void drawGoalboard() {
 	SetPenColor(theme ? "Background1" : "Border1");
-	drawBox(9, 7, 2, 1, 0, game.isGaming ? numToString(goal[game.level] - game.elimRowCounter) : "TETRIS!", "L", theme ? "Side2" : "Side4");
+	drawBox(9, 7, 2, 1, 0, game.isGaming ? (game.level == 9 ? "¡Þ" : numToString(goal[game.level] - game.elimRowCounter)) : "TETRIS!", "L", theme ? "Side2" : "Side4");
 	MovePen(9.65, 8.2);
 	DrawTextString("GOAL");
 }
@@ -58,6 +58,7 @@ void drawHoldDropping() {
 	MovePen(9.6, 2.5);
 	SetPenColor(theme ? "Font1" : "Font2");
 	DrawTextString("HOLD");
+	if (drop.hold == -1) return;
 	int i, j;
 	for (i = 0; i < 4; i++)
 		for (j = 0; j < 4; j++) {

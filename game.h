@@ -1,25 +1,13 @@
+#ifndef _GAME
+#define _GAME
+
 #include "graphics.h"
 #include "extgraph.h"
-#include "genlib.h"
-#include "simpio.h"
-#include "random.h"
-#include "strlib.h"
-#include "conio.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <stddef.h>
 
-#include <windows.h>
-#include <olectl.h>
-#include <mmsystem.h>
-#include <wingdi.h>
-#include <ole2.h>
-#include <ocidl.h>
-#include <winuser.h>
+#include "imgui.h"
 
-#ifndef _defGD
-#define _defGD
+#include "data.h"
+#include "side.h"
 
 typedef struct {
 	bool isDropping;
@@ -42,8 +30,6 @@ typedef struct {
 	int mat[4][4];
 } Dropping;
 
-#endif // !_def
-
 void refreshGame();
 
 void showBlock();
@@ -60,18 +46,19 @@ void fixIt();
 void moveIt(int direction);
 void rotateIt();
 void dropToBottom();
-int findBottomPosition();
 void scoreIt(int count, int flag);
 void createDropping();
 void holdDropping();
+int findBottomPosition();
 
 bool checkForElimination();
 void checkForLevelUp();
 void eliminate(int index);
-void gravity();
 
 void newGame();
 int switchGame(bool isPause);
 void gameOver();
 
 char* numToString(int x);
+
+#endif
