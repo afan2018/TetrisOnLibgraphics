@@ -3,6 +3,7 @@
 
 #include "graphics.h"
 #include "extgraph.h"
+#include "math.h"
 
 #include "imgui.h"
 

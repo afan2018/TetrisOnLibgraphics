@@ -248,7 +248,7 @@ bool verify(char* str, char *fileName) {
 		fscanf(fw, "%02x", &x);
 		if (decrypt[i] != x) {
 			fclose(fw);
-			return 1;
+			return 0;
 		}
 	}
 	fclose(fw);

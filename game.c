@@ -18,7 +18,6 @@
 // different values in map stand for different colors
 
 int map[26][16];
-extern theme;
 
 int Tetriminos[10][4][4][4] = {
 	{
@@ -202,6 +201,8 @@ void showBlock() {
 	if (game.isGaming && !game.isDropping) drawPause();
 }
 
+extern int theme;
+
 void drawGameArea() {
 	SetPenColor(theme ? "Border1" : "Border2");
 	SetPenSize(3);
@@ -209,8 +210,6 @@ void drawGameArea() {
 	DrawLine(0, GameAreaHeight);
 	DrawLine(-GameAreaHeight, 0);
 }
-
-extern int theme;
 
 void drawBlock(int color, int row, int column, bool isHint) {
 	switch (color) {
@@ -346,10 +345,10 @@ void dropIt() {
 void fixIt() {
 	int i, j;
 	if (!drop.ready) return;
-	for (i = 0; i < 4; i++)
+	for (i = 3; i >= 0; i--)
 		for (j = 0; j < 4; j++) {
 			if (!drop.mat[i][j]) continue;
-			if (drop.row - i > 23) {
+			if (drop.row - i >= 23) {
 				gameOver();
 				return;
 			}
@@ -369,17 +368,19 @@ double calcStdDeviation(int *a, int n) {
 	ave /= n;
 	for (i = 0; i < n; i++) ans += (a[i] - ave)*(a[i] - ave);
 	ans /= n;
-	return sqrt(ans);
+	return ans;
 }
 
 int randDroppingID() {
-	static int count[8];
+	static int count[8] = { 0 };
 	while (1) {
 		int id = (int)(rand() * 10) % 7;
 		count[id]++;
 		if (calcStdDeviation(count, 7) - 2 < 0.0001) return id;
 		count[id]--;
+		getchar();
 	}
+	
 }
 
 void createDropping() {
@@ -517,6 +518,7 @@ void newGame() {
 	memset(map, 0, sizeof(map));
 	erase("game.dat");
 	popContinueQuery = 0;
+	
 }
 
 int switchGame(bool isPause) {

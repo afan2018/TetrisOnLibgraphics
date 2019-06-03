@@ -7,14 +7,14 @@ extern theme;
 
 void drawScoreboard() {
 	SetPenColor(theme ? "Background1" : "Border1");
-	drawBox(9, 10.5, 2, 1, 0, game.isGaming ? numToString(game.score) : "HAPPY", "L", theme ? "Side1" : "Red1");
+	drawBox(9, 10.5, 2, 1, 0, game.isGaming ? numToString(game.score) : "HAPPY", "L", theme ? "Side2" : "Red1");
 	MovePen(9.55, 11.7);
 	DrawTextString("SCORE");
 }
 
 void drawLevelboard() {
 	SetPenColor(theme ? "Background1" : "Border1");
-	drawBox(9, 8.8, 2, 1, 0, game.isGaming ? numToString(game.level) : "HAPPY", "L", theme ? "Side2" : "Side4");
+	drawBox(9, 8.8, 2, 1, 0, game.isGaming ? numToString(game.level) : "HAPPY", "L", theme ? "Side1" : "Side4");
 	MovePen(9.6, 10);
 	DrawTextString("LEVEL");
 }
@@ -23,7 +23,7 @@ extern int goal[10];
 
 void drawGoalboard() {
 	SetPenColor(theme ? "Background1" : "Border1");
-	drawBox(9, 7, 2, 1, 0, game.isGaming ? (game.level == 9 ? "¡Þ" : numToString(goal[game.level] - game.elimRowCounter)) : "TETRIS!", "L", theme ? "Side2" : "Side4");
+	drawBox(9, 7, 2, 1, 0, game.isGaming ? (game.level == 9 ? "¡Þ" : numToString(goal[game.level] - game.elimRowCounter)) : "TETRIS!", "L", theme ? "Side1" : "Side4");
 	MovePen(9.65, 8.2);
 	DrawTextString("GOAL");
 }
