@@ -2,6 +2,7 @@
 #include "menu.h"
 #include "data.h"
 #include "side.h"
+#include "draw.h"
 #include <windows.h>
 
 #define WindowWidth 12
@@ -84,27 +85,39 @@ void drawGlobalBackground() {
 	SetPenColor(theme ? "white" : "black");
 	drawRectangle(0, 0, WindowWidth, WindowHeight, 1);
 }
-
+extern int pics;
 extern int popNameQuery;
 extern int popRanklist;
 extern int popContinueQuery;
 extern int popRUSure;
 extern int popHelp;
+extern int popAbout;
 
 void display() {
 	DisplayClear();
-	drawGlobalBackground();
-	drawGameArea();
-	showBlock();
-	drawMenu();
-	drawScoreboard();
-	drawLevelboard();
-	drawGoalboard();
-	drawNextDropping();
-	drawHoldDropping();
+	if (pics == 1) {
+		drawGlobalBackground();
+		drawGameArea();
+		showBlock();
+		drawMenu();
+		drawScoreboard();
+		drawLevelboard();
+		drawGoalboard();
+		drawNextDropping();
+		drawHoldDropping();
+	}
+	if (pics == 0) {
+		drawT();
+		drawE();
+		drawR();
+		drawI();
+		drawS();
+		drawButtons();
+	}
 	if (popRanklist) drawRanklist();
 	if (popNameQuery) drawNameQuery();
 	if (popContinueQuery) drawLoadGameQuery();
 	if (popRUSure) drawRUSure();
 	if (popHelp) drawHelp();
+	if (popAbout) drawAbout();
 }

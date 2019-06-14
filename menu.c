@@ -10,6 +10,7 @@ bool themeButtonStatus = 0;
 int popRanklist = 0;
 int popRUSure = 0;
 int popHelp = 0;
+int popAbout = 0;
 int theme = 1;
 
 extern Game game;
@@ -41,6 +42,31 @@ void drawHelp() {
 	}
 }
 
+void drawAbout() {
+	SetPenColor("Background1");
+	drawRectangle(3, 3.2, 6, 5, 1);
+	SetPenColor("Border1");
+	drawRectangle(3, 3.2, 6, 5, 0);
+	MovePen(5.6, 7.6);
+	DrawTextString("ABOUT");
+	MovePen(4.9, 6.9);
+	DrawTextString("Made by Group 16");
+	MovePen(5.3, 6.3);
+	DrawTextString("Fan Andong");
+	MovePen(5.25, 5.7);
+	DrawTextString("Wang Caiyu");
+	MovePen(5.3, 5.1);
+	DrawTextString("Yao Zheyu");
+	MovePen(4.3, 4.5);
+	DrawTextString("2019 · No Right to Reserve");
+	setTextBoxColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
+	setButtonColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
+	setMenuColors(c[theme * 4], c[theme * 4 + 1], c[theme * 4 + 2], c[theme * 4 + 3], 0);
+	if (button(GenUIID(0), 5, 3.5, 2, 0.5, "Dismiss")) {
+		popAbout = 0;
+	}
+}
+
 void drawMenu() {
 	static char * menulistGame[] = {
 		"Game",
@@ -54,7 +80,7 @@ void drawMenu() {
 	static char * menulistHelp[] = {
 		"Help",
 		"Read Help",
-	//	"About"
+		"About"
 	};
 
 	double fH = GetFontHeight();
@@ -111,7 +137,9 @@ void drawMenu() {
 		popHelp = 1;
 		if (switchGame(1) != -1) pauseButtonStatus = 1;
 		break;
-	//case 2:
-		//break;
+	case 2:
+		popAbout = 1;
+		if (switchGame(1) != -1) pauseButtonStatus = 1;
+		break;
 	}
 }

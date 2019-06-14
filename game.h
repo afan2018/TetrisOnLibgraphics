@@ -1,6 +1,9 @@
 #ifndef _GAME
 #define _GAME
 
+#include <windows.h>
+#include "pthread.h"
+
 #include "graphics.h"
 #include "extgraph.h"
 #include "math.h"
@@ -9,6 +12,8 @@
 
 #include "data.h"
 #include "side.h"
+
+#pragma comment(lib, "pthreadVC2.lib")
 
 typedef struct {
 	bool isDropping;

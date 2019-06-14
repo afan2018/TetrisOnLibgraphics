@@ -399,13 +399,25 @@ void moveIt(int id) {
 	if (!game.isDropping || id > 1) return;
 	int direction[5][2] = { {-1},{1} };
 	int i, j;
-	for (i = 0; i < 4; i++)
-		for (j = 0; j < 4; j++)
-			if (drop.mat[i][j] != 0 && (map[drop.row - i][drop.column + j + direction[id][0]] || drop.column + j + direction[id][0] < 0 || drop.column + j + direction[id][0] > 15))
-				return;
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 4; j++) {
+			if (drop.mat[i][j] != 0 && (
+					map[drop.row - i][drop.column + j + direction[id][0]] ||
+					drop.column + j + direction[id][0] < 0 ||
+					drop.column + j + direction[id][0] > 15
+				)
+			) return;
+		}
+	}
 	drop.ready = 0;
 	readyCount = 0;
 	drop.column += direction[id][0];
+}
+
+void* myBeep(void* args) {
+	Beep(1000, 100);
+	Sleep(100);
+	return NULL;
 }
 
 bool checkForElimination() {
@@ -422,6 +434,12 @@ bool checkForElimination() {
 			elimRowCounter++;
 			eliminate(i);
 		}
+	}
+	for (i = 0; i < elimRowCounter; i++) {
+		pthread_t threadID;
+		int ret = pthread_create(&threadID, 0, &myBeep, NULL);
+		if (ret == -1) exit(0);
+		pthread_detach(threadID);
 	}
 	scoreIt(elimRowCounter, 0);
 	game.elimRowCounter += elimRowCounter;
@@ -461,8 +479,13 @@ void rotateIt() {
 			drop.direction = (drop.direction + 1) % 4;
 			for (i = 0; i < 4; i++) {
 				for (j = 0; j < 4; j++) {
-					if (Tetriminos[drop.id][drop.direction][i][j] != 0 && (map[drop.row - i][drop.column + py[l] + j] || drop.row - i < 0 || drop.column + py[l] + j > 15|| drop.column + py[l] + j < 0))
-						feasible = 0;
+					if (Tetriminos[drop.id][drop.direction][i][j] != 0 && (
+							map[drop.row - i][drop.column + py[l] + j] ||
+							drop.row - i < 0 ||
+							drop.column + py[l] + j > 15 ||
+							drop.column + py[l] + j < 0
+						)
+					) feasible = 0;
 				}
 			}
 			if (feasible) {
@@ -505,6 +528,8 @@ int findBottomPosition() {
 }
 
 extern int popContinueQuery;
+extern int popHelp;
+extern int popAbout;
 
 void newGame() {
 	game.isGaming = 1;
@@ -518,7 +543,9 @@ void newGame() {
 	memset(map, 0, sizeof(map));
 	erase("game.dat");
 	popContinueQuery = 0;
-	
+	popNameQuery = 0;
+	popHelp = 0;
+	popAbout = 0;
 }
 
 int switchGame(bool isPause) {
